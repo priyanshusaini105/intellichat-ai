@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon --watch src --ext ts --exec \"ts-node --esm src/server.ts\"",
+    "start": "ts-node --esm src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
