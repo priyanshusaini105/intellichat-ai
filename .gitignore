@@ -98,6 +98,9 @@ temp/
 *.suo
 *.ntvs*
 *.njsproj
+ 
+# Playwright MCP screenshots and artifacts
+.playwright-mcp/
 *.sln
 *.sw?
 
