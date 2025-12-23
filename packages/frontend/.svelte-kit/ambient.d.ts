@@ -30,7 +30,6 @@ declare module '$env/static/private' {
 	export const SHELL: string;
 	export const LSCOLORS: string;
 	export const npm_command: string;
-	export const USER_ZDOTDIR: string;
 	export const COLORTERM: string;
 	export const HYPRLAND_CMD: string;
 	export const XDG_SESSION_PATH: string;
@@ -47,18 +46,18 @@ declare module '$env/static/private' {
 	export const npm_config_globalconfig: string;
 	export const XDG_SEAT: string;
 	export const PWD: string;
-	export const XDG_SESSION_DESKTOP: string;
 	export const LOGNAME: string;
+	export const XDG_SESSION_DESKTOP: string;
 	export const QT_QPA_PLATFORMTHEME: string;
 	export const XDG_SESSION_TYPE: string;
+	export const npm_config_recursive: string;
 	export const VSCODE_GIT_ASKPASS_NODE: string;
 	export const TERMINAL: string;
 	export const MOTD_SHOWN: string;
-	export const VSCODE_INJECTION: string;
 	export const HOME: string;
 	export const LANG: string;
-	export const _JAVA_AWT_WM_NONREPARENTING: string;
 	export const LS_COLORS: string;
+	export const _JAVA_AWT_WM_NONREPARENTING: string;
 	export const XDG_CURRENT_DESKTOP: string;
 	export const npm_package_version: string;
 	export const PYTHONSTARTUP: string;
@@ -71,16 +70,14 @@ declare module '$env/static/private' {
 	export const QT_QPA_PLATFORM: string;
 	export const npm_lifecycle_script: string;
 	export const VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
-	export const VSCODE_PYTHON_AUTOACTIVATE_GUARD: string;
 	export const XDG_SESSION_CLASS: string;
 	export const TERM: string;
 	export const npm_package_name: string;
-	export const PYTHON_BASIC_REPL: string;
 	export const ZSH: string;
-	export const ZDOTDIR: string;
+	export const PYTHON_BASIC_REPL: string;
+	export const VSCODE_NONCE: string;
 	export const USER: string;
 	export const npm_config_frozen_lockfile: string;
-	export const GIT_PAGER: string;
 	export const VSCODE_GIT_IPC_HANDLE: string;
 	export const HYPRLAND_INSTANCE_SIGNATURE: string;
 	export const DISPLAY: string;
@@ -88,7 +85,6 @@ declare module '$env/static/private' {
 	export const SHLVL: string;
 	export const MOZ_ENABLE_WAYLAND: string;
 	export const PAGER: string;
-	export const npm_config_manage_package_manager_versions: string;
 	export const XDG_VTNR: string;
 	export const XDG_SESSION_ID: string;
 	export const npm_config_user_agent: string;
@@ -111,6 +107,8 @@ declare module '$env/static/private' {
 	export const npm_node_execpath: string;
 	export const OLDPWD: string;
 	export const TERM_PROGRAM: string;
+	export const NODE_ENV: string;
+	export const PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS: string;
 }
 
 /**
@@ -144,7 +142,6 @@ declare module '$env/dynamic/private' {
 		SHELL: string;
 		LSCOLORS: string;
 		npm_command: string;
-		USER_ZDOTDIR: string;
 		COLORTERM: string;
 		HYPRLAND_CMD: string;
 		XDG_SESSION_PATH: string;
@@ -161,18 +158,18 @@ declare module '$env/dynamic/private' {
 		npm_config_globalconfig: string;
 		XDG_SEAT: string;
 		PWD: string;
-		XDG_SESSION_DESKTOP: string;
 		LOGNAME: string;
+		XDG_SESSION_DESKTOP: string;
 		QT_QPA_PLATFORMTHEME: string;
 		XDG_SESSION_TYPE: string;
+		npm_config_recursive: string;
 		VSCODE_GIT_ASKPASS_NODE: string;
 		TERMINAL: string;
 		MOTD_SHOWN: string;
-		VSCODE_INJECTION: string;
 		HOME: string;
 		LANG: string;
-		_JAVA_AWT_WM_NONREPARENTING: string;
 		LS_COLORS: string;
+		_JAVA_AWT_WM_NONREPARENTING: string;
 		XDG_CURRENT_DESKTOP: string;
 		npm_package_version: string;
 		PYTHONSTARTUP: string;
@@ -185,16 +182,14 @@ declare module '$env/dynamic/private' {
 		QT_QPA_PLATFORM: string;
 		npm_lifecycle_script: string;
 		VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
-		VSCODE_PYTHON_AUTOACTIVATE_GUARD: string;
 		XDG_SESSION_CLASS: string;
 		TERM: string;
 		npm_package_name: string;
-		PYTHON_BASIC_REPL: string;
 		ZSH: string;
-		ZDOTDIR: string;
+		PYTHON_BASIC_REPL: string;
+		VSCODE_NONCE: string;
 		USER: string;
 		npm_config_frozen_lockfile: string;
-		GIT_PAGER: string;
 		VSCODE_GIT_IPC_HANDLE: string;
 		HYPRLAND_INSTANCE_SIGNATURE: string;
 		DISPLAY: string;
@@ -202,7 +197,6 @@ declare module '$env/dynamic/private' {
 		SHLVL: string;
 		MOZ_ENABLE_WAYLAND: string;
 		PAGER: string;
-		npm_config_manage_package_manager_versions: string;
 		XDG_VTNR: string;
 		XDG_SESSION_ID: string;
 		npm_config_user_agent: string;
@@ -225,6 +219,8 @@ declare module '$env/dynamic/private' {
 		npm_node_execpath: string;
 		OLDPWD: string;
 		TERM_PROGRAM: string;
+		NODE_ENV: string;
+		PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}

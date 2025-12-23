@@ -33,8 +33,8 @@ COPY pnpm-workspace.yaml package.json ./
 WORKDIR /app/packages/backend
 RUN pnpm prisma:generate
 
-# Build TypeScript
-RUN pnpm build
+# Clean previous build and build TypeScript
+RUN rm -rf dist && pnpm build
 
 # Stage 3: Production
 FROM base AS production
@@ -45,6 +45,11 @@ WORKDIR /app
 COPY --from=build /app/packages/backend/package.json ./
 COPY --from=build /app/packages/backend/dist ./dist
 COPY --from=build /app/packages/backend/prisma ./prisma
+COPY --from=build /app/packages/backend/prisma.config.ts ./prisma.config.ts
+
+# Copy entrypoint script
+COPY packages/backend/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
 
 # Install production dependencies with npm
 RUN npm install --only=production
@@ -62,5 +67,8 @@ EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
+# Use entrypoint script
+ENTRYPOINT ["./docker-entrypoint.sh"]
+
 # Start server
-CMD ["node", "dist/server.js"]
+CMD ["node", "dist/src/server.js"]

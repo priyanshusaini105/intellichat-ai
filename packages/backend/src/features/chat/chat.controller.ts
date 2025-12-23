@@ -41,6 +41,9 @@ export class ChatController {
       
       if (sessionId) {
         conversation = await this.conversationRepository.findBySessionId(sessionId);
+        if (!conversation) {
+          console.log(`Conversation not found for sessionId: ${sessionId}, creating new conversation`);
+        }
       }
 
       if (!conversation) {

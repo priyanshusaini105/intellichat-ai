@@ -48,8 +48,9 @@ export class ConversationRepository implements IConversationRepository {
       });
       return conversation;
     } catch (error) {
+      // If it's a validation error (invalid UUID), return null instead of throwing
       console.error('Failed to find conversation', error);
-      throw new Error('Failed to find conversation');
+      return null;
     }
   }
 
