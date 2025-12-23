@@ -112,4 +112,5 @@ AGENTS.md
 # OS generated files
 Thumbs.db
 ehthumbs.db
-Desktop.ini.svelte-kit/
+Desktop.ini
+.svelte-kit/

@@ -8,10 +8,8 @@
 		Wand2,
 		X,
 		Zap,
-		Phone,
 		Clock,
-		MessageSquare,
-		ArrowUpRight
+		MessageSquare
 	} from 'lucide-svelte';
 
 	type ChatView = 'welcome' | 'chat' | 'details';
@@ -169,10 +167,6 @@
 		}
 	}
 
-	function handleWhatsapp() {
-		window.open('https://wa.me/', '_blank');
-	}
-
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
@@ -215,7 +209,7 @@
 	aria-label={isOpen ? 'Close support widget' : 'Open support widget'}
 >
 	{#if isOpen}
-		<X class="h-6 w-6" />
+		<X class="h-6 w-6 animate-rotate-in" />
 	{:else}
 		<MessageSquare class="h-6 w-6" />
 	{/if}
@@ -291,21 +285,6 @@
 								</button>
 							</div>
 
-							<button
-								on:click={handleWhatsapp}
-								class="flex w-full items-center justify-between rounded-2xl border border-slate-100 bg-white/90 px-4 py-4 text-left shadow-sm transition hover:-translate-y-[1px] hover:shadow-md"
-							>
-								<div class="flex items-center gap-3">
-									<div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-600">
-										<Phone class="h-5 w-5" />
-									</div>
-									<div>
-										<p class="text-sm font-semibold text-slate-800">Chat with us on WhatsApp</p>
-										<p class="text-xs text-slate-500">Fast lane support</p>
-									</div>
-								</div>
-								<ArrowUpRight class="h-5 w-5 text-slate-400" />
-							</button>
 						</div>
 
 						<div class="space-y-2">
@@ -480,6 +459,21 @@
 		to {
 			opacity: 1;
 			transform: translateY(0);
+		}
+	}
+
+	:global(.animate-rotate-in) {
+		animation: rotate-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+	}
+
+	@keyframes rotate-in {
+		from {
+			opacity: 0;
+			transform: rotate(-180deg) scale(0.8);
+		}
+		to {
+			opacity: 1;
+			transform: rotate(0deg) scale(1);
 		}
 	}
 
