@@ -3,6 +3,7 @@ import { getEnvConfig } from './config/env.js';
 import { connectDatabase, disconnectDatabase } from './config/database.js';
 import { GroqProvider } from './integrations/llm/groq.provider.js';
 import { MessageRepository } from './repositories/message.repository.js';
+import { ConversationRepository } from './repositories/conversation.repository.js';
 
 async function startServer() {
   try {
@@ -15,9 +16,10 @@ async function startServer() {
     // 2. Initialize dependencies
     const llmProvider = new GroqProvider(config.groqApiKey);
     const messageRepository = new MessageRepository();
+    const conversationRepository = new ConversationRepository();
 
     // 3. Create app with dependencies
-    const app = createApp({ llmProvider, messageRepository });
+    const app = createApp({ llmProvider, messageRepository, conversationRepository });
 
     // 4. Start server
     const server = app.listen(config.port, () => {

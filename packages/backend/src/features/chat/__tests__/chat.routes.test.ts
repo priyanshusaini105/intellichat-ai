@@ -6,6 +6,7 @@ import { createMockLLMProvider } from '../../../../tests/helpers/mock-llm.js';
 import { LLMServiceError } from '../../../shared/errors/custom-errors.js';
 import { errorHandler } from '../../../shared/middleware/error-handler.js';
 import type { IMessageRepository } from '../../../repositories/message.repository.js';
+import type { IConversationRepository } from '../../../repositories/conversation.repository.js';
 
 // Mock message repository helper
 function createMockMessageRepository(): jest.Mocked<IMessageRepository> {
@@ -15,27 +16,45 @@ function createMockMessageRepository(): jest.Mocked<IMessageRepository> {
   };
 }
 
+// Mock conversation repository helper
+function createMockConversationRepository(): jest.Mocked<IConversationRepository> {
+  return {
+    create: jest.fn<any>(),
+    findBySessionId: jest.fn<any>(),
+  };
+}
+
 describe('Chat Routes', () => {
   let app: express.Application;
   let mockLLMProvider: ReturnType<typeof createMockLLMProvider>;
   let mockMessageRepo: jest.Mocked<IMessageRepository>;
+  let mockConversationRepo: jest.Mocked<IConversationRepository>;
 
   beforeEach(() => {
     mockLLMProvider = createMockLLMProvider();
     mockMessageRepo = createMockMessageRepository();
+    mockConversationRepo = createMockConversationRepository();
     
     // Default successful responses
     mockMessageRepo.create.mockResolvedValue({
       id: 'msg-id',
+      conversationId: 'conv-123',
       sender: 'user',
       content: 'test',
       timestamp: new Date(),
+    });
+
+    mockConversationRepo.create.mockResolvedValue({
+      id: 'conv-123',
+      sessionId: 'session-abc',
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
     
     // Create minimal Express app for testing
     app = express();
     app.use(express.json());
-    app.use('/api/chat', createChatRouter(mockLLMProvider, mockMessageRepo));
+    app.use('/api/chat', createChatRouter(mockLLMProvider, mockMessageRepo, mockConversationRepo));
     app.use(errorHandler);
   });
 
@@ -49,6 +68,8 @@ describe('Chat Routes', () => {
         .expect(200);
 
       expect(response.body).toHaveProperty('reply');
+      expect(response.body).toHaveProperty('sessionId');
+      expect(response.body.sessionId).toBe('session-abc');
     });
 
     it('should return 400 for empty message', async () => {
@@ -102,6 +123,7 @@ describe('Chat Routes', () => {
 
       expect(response.body).toEqual({
         reply: 'AI response',
+        sessionId: 'session-abc',
       });
     });
 

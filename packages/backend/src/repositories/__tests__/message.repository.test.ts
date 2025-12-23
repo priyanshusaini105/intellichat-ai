@@ -23,9 +23,12 @@ describe('MessageRepository', () => {
   });
 
   describe('create', () => {
-    it('should save user message to database', async () => {
+    const conversationId = 'conv-123';
+
+    it('should save user message to database with conversationId', async () => {
       const mockMessage = {
         id: 'msg-123',
+        conversationId: 'conv-123',
         sender: 'user',
         content: 'Hello',
         timestamp: new Date(),
@@ -33,10 +36,11 @@ describe('MessageRepository', () => {
 
       mockPrisma.message.create.mockResolvedValue(mockMessage);
 
-      const result = await repository.create('user', 'Hello');
+      const result = await repository.create(conversationId, 'user', 'Hello');
 
       expect(mockPrisma.message.create).toHaveBeenCalledWith({
         data: {
+          conversationId: 'conv-123',
           sender: 'user',
           content: 'Hello',
         },
@@ -44,11 +48,13 @@ describe('MessageRepository', () => {
       expect(result.sender).toBe('user');
       expect(result.content).toBe('Hello');
       expect(result.id).toBe('msg-123');
+      expect(result.conversationId).toBe('conv-123');
     });
 
-    it('should save AI message to database', async () => {
+    it('should save AI message to database with conversationId', async () => {
       const mockMessage = {
         id: 'msg-456',
+        conversationId: 'conv-123',
         sender: 'ai',
         content: 'How can I help?',
         timestamp: new Date(),
@@ -56,10 +62,11 @@ describe('MessageRepository', () => {
 
       mockPrisma.message.create.mockResolvedValue(mockMessage);
 
-      const result = await repository.create('ai', 'How can I help?');
+      const result = await repository.create(conversationId, 'ai', 'How can I help?');
 
       expect(mockPrisma.message.create).toHaveBeenCalledWith({
         data: {
+          conversationId: 'conv-123',
           sender: 'ai',
           content: 'How can I help?',
         },
@@ -72,7 +79,7 @@ describe('MessageRepository', () => {
       const dbError = new Error('DB Connection Error');
       mockPrisma.message.create.mockRejectedValue(dbError);
 
-      await expect(repository.create('user', 'Test'))
+      await expect(repository.create(conversationId, 'user', 'Test'))
         .rejects
         .toThrow('Failed to save message');
     });
@@ -80,6 +87,7 @@ describe('MessageRepository', () => {
     it('should handle empty content gracefully', async () => {
       const mockMessage = {
         id: 'msg-789',
+        conversationId: 'conv-123',
         sender: 'user',
         content: '',
         timestamp: new Date(),
@@ -87,7 +95,7 @@ describe('MessageRepository', () => {
 
       mockPrisma.message.create.mockResolvedValue(mockMessage);
 
-      const result = await repository.create('user', '');
+      const result = await repository.create(conversationId, 'user', '');
 
       expect(result.content).toBe('');
     });

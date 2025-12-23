@@ -3,6 +3,7 @@ import { ChatController } from '../chat.controller.js';
 import { ValidationError, LLMServiceError } from '../../../shared/errors/custom-errors.js';
 import { createMockLLMProvider } from '../../../../tests/helpers/mock-llm.js';
 import type { IMessageRepository } from '../../../repositories/message.repository.js';
+import type { IConversationRepository } from '../../../repositories/conversation.repository.js';
 
 // Mock message repository helper
 function createMockMessageRepository(): jest.Mocked<IMessageRepository> {
@@ -12,22 +13,40 @@ function createMockMessageRepository(): jest.Mocked<IMessageRepository> {
   };
 }
 
+// Mock conversation repository helper
+function createMockConversationRepository(): jest.Mocked<IConversationRepository> {
+  return {
+    create: jest.fn<any>(),
+    findBySessionId: jest.fn<any>(),
+  };
+}
+
 describe('ChatController', () => {
   let controller: ChatController;
   let mockLLMProvider: ReturnType<typeof createMockLLMProvider>;
   let mockMessageRepo: jest.Mocked<IMessageRepository>;
+  let mockConversationRepo: jest.Mocked<IConversationRepository>;
 
   beforeEach(() => {
     mockLLMProvider = createMockLLMProvider();
     mockMessageRepo = createMockMessageRepository();
-    controller = new ChatController(mockLLMProvider, mockMessageRepo);
+    mockConversationRepo = createMockConversationRepository();
+    controller = new ChatController(mockLLMProvider, mockMessageRepo, mockConversationRepo);
     
     // Default successful responses
     mockMessageRepo.create.mockResolvedValue({
       id: 'msg-id',
+      conversationId: 'conv-123',
       sender: 'user',
       content: 'test',
       timestamp: new Date(),
+    });
+
+    mockConversationRepo.create.mockResolvedValue({
+      id: 'conv-123',
+      sessionId: 'session-abc',
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
   });
 
@@ -76,7 +95,9 @@ describe('ChatController', () => {
       const result = await controller.handleMessage('Hello');
 
       expect(result).toHaveProperty('reply');
+      expect(result).toHaveProperty('sessionId');
       expect(typeof result.reply).toBe('string');
+      expect(typeof result.sessionId).toBe('string');
     });
 
     it('should propagate LLMServiceError from provider', async () => {
@@ -102,13 +123,69 @@ describe('ChatController', () => {
     });
   });
 
+  describe('Session Management', () => {
+    it('should create new conversation if no sessionId provided', async () => {
+      (mockLLMProvider.generateReply as any).mockResolvedValue('AI response');
+
+      const result = await controller.handleMessage('Hello');
+
+      expect(mockConversationRepo.create).toHaveBeenCalled();
+      expect(mockConversationRepo.findBySessionId).not.toHaveBeenCalled();
+      expect(result.sessionId).toBe('session-abc');
+    });
+
+    it('should reuse existing conversation if valid sessionId provided', async () => {
+      const existingConversation = {
+        id: 'conv-existing',
+        sessionId: 'session-123',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      mockConversationRepo.findBySessionId.mockResolvedValue(existingConversation);
+      (mockLLMProvider.generateReply as any).mockResolvedValue('AI response');
+
+      const result = await controller.handleMessage('Hello', 'session-123');
+
+      expect(mockConversationRepo.findBySessionId).toHaveBeenCalledWith('session-123');
+      expect(mockConversationRepo.create).not.toHaveBeenCalled();
+      expect(result.sessionId).toBe('session-123');
+    });
+
+    it('should create new conversation if provided sessionId not found', async () => {
+      mockConversationRepo.findBySessionId.mockResolvedValue(null);
+      (mockLLMProvider.generateReply as any).mockResolvedValue('AI response');
+
+      const result = await controller.handleMessage('Hello', 'invalid-session');
+
+      expect(mockConversationRepo.findBySessionId).toHaveBeenCalledWith('invalid-session');
+      expect(mockConversationRepo.create).toHaveBeenCalled();
+      expect(result.sessionId).toBe('session-abc');
+    });
+
+    it('should link messages to the conversation', async () => {
+      (mockLLMProvider.generateReply as any).mockResolvedValue('AI response');
+
+      await controller.handleMessage('Hello');
+
+      const calls = mockMessageRepo.create.mock.calls;
+      expect(calls[0][0]).toBe('conv-123'); // conversationId
+      expect(calls[0][1]).toBe('user');
+      expect(calls[0][2]).toBe('Hello');
+      
+      expect(calls[1][0]).toBe('conv-123'); // conversationId
+      expect(calls[1][1]).toBe('ai');
+      expect(calls[1][2]).toBe('AI response');
+    });
+  });
+
   describe('Database persistence', () => {
     it('should save user message before calling LLM', async () => {
       (mockLLMProvider.generateReply as any).mockResolvedValue('AI response');
 
       await controller.handleMessage('Hello');
 
-      expect(mockMessageRepo.create).toHaveBeenCalledWith('user', 'Hello');
+      expect(mockMessageRepo.create).toHaveBeenCalledWith('conv-123', 'user', 'Hello');
     });
 
     it('should save AI response after LLM returns', async () => {
@@ -116,7 +193,7 @@ describe('ChatController', () => {
 
       await controller.handleMessage('Hello');
 
-      expect(mockMessageRepo.create).toHaveBeenCalledWith('ai', 'AI response');
+      expect(mockMessageRepo.create).toHaveBeenCalledWith('conv-123', 'ai', 'AI response');
     });
 
     it('should save both messages in correct order', async () => {
@@ -126,8 +203,8 @@ describe('ChatController', () => {
 
       const calls = mockMessageRepo.create.mock.calls;
       expect(calls.length).toBe(2);
-      expect(calls[0]).toEqual(['user', 'Hello']);
-      expect(calls[1]).toEqual(['ai', 'AI response']);
+      expect(calls[0]).toEqual(['conv-123', 'user', 'Hello']);
+      expect(calls[1]).toEqual(['conv-123', 'ai', 'AI response']);
     });
 
     it('should still return reply if user message save fails', async () => {
@@ -135,6 +212,7 @@ describe('ChatController', () => {
         .mockRejectedValueOnce(new Error('DB Error'))
         .mockResolvedValueOnce({
           id: 'msg-2',
+          conversationId: 'conv-123',
           sender: 'ai',
           content: 'AI response',
           timestamp: new Date(),
@@ -152,6 +230,7 @@ describe('ChatController', () => {
       mockMessageRepo.create
         .mockResolvedValueOnce({
           id: 'msg-1',
+          conversationId: 'conv-123',
           sender: 'user',
           content: 'Hello',
           timestamp: new Date(),

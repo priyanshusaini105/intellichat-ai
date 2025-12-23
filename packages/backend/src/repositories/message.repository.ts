@@ -2,7 +2,7 @@ import type { Message } from '@prisma/client';
 import { prisma } from '../config/database.js';
 
 export interface IMessageRepository {
-  create(sender: string, content: string): Promise<Message>;
+  create(conversationId: string, sender: string, content: string): Promise<Message>;
   count(): Promise<number>;
 }
 
@@ -10,10 +10,11 @@ export class MessageRepository implements IMessageRepository {
   /**
    * Save a message (user or AI) to database
    */
-  async create(sender: 'user' | 'ai', content: string): Promise<Message> {
+  async create(conversationId: string, sender: 'user' | 'ai', content: string): Promise<Message> {
     try {
       const message = await prisma.message.create({
         data: {
+          conversationId,
           sender,
           content,
         },

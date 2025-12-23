@@ -1,5 +1,6 @@
 import type { ILLMProvider } from '../../integrations/llm/llm.interface.js';
 import type { IMessageRepository } from '../../repositories/message.repository.js';
+import type { IConversationRepository } from '../../repositories/conversation.repository.js';
 import { ValidationError } from '../../shared/errors/custom-errors.js';
 import type { ChatResponse } from './chat.types.js';
 
@@ -9,16 +10,18 @@ import type { ChatResponse } from './chat.types.js';
 export class ChatController {
   constructor(
     private llmProvider: ILLMProvider,
-    private messageRepository: IMessageRepository
+    private messageRepository: IMessageRepository,
+    private conversationRepository: IConversationRepository
   ) {}
 
   /**
    * Handle user message and generate AI reply
    * @param message - User's message
-   * @returns Chat response with AI reply
+   * @param sessionId - Optional sessionId to continue existing conversation
+   * @returns Chat response with AI reply and sessionId
    * @throws ValidationError if message is empty
    */
-  async handleMessage(message: string): Promise<ChatResponse> {
+  async handleMessage(message: string, sessionId?: string): Promise<ChatResponse> {
     const trimmedMessage = message.trim();
 
     if (!trimmedMessage) {
@@ -26,16 +29,27 @@ export class ChatController {
     }
 
     try {
-      // 1. Save user message to database
-      await this.saveMessage('user', trimmedMessage);
+      // 1. Resolve Conversation (find existing or create new)
+      let conversation;
+      
+      if (sessionId) {
+        conversation = await this.conversationRepository.findBySessionId(sessionId);
+      }
 
-      // 2. Get AI response from LLM
+      if (!conversation) {
+        conversation = await this.conversationRepository.create();
+      }
+
+      // 2. Save user message to database (linked to conversation)
+      await this.saveMessage(conversation.id, 'user', trimmedMessage);
+
+      // 3. Get AI response from LLM
       const reply = await this.llmProvider.generateReply(trimmedMessage);
 
-      // 3. Save AI response to database
-      await this.saveMessage('ai', reply);
+      // 4. Save AI response to database (linked to conversation)
+      await this.saveMessage(conversation.id, 'ai', reply);
 
-      return { reply };
+      return { reply, sessionId: conversation.sessionId };
     } catch (error) {
       console.error('Error in chat controller', error);
       throw error;
@@ -46,9 +60,9 @@ export class ChatController {
    * Save message to database with error handling
    * Non-blocking - continues even if save fails
    */
-  private async saveMessage(sender: 'user' | 'ai', content: string): Promise<void> {
+  private async saveMessage(conversationId: string, sender: 'user' | 'ai', content: string): Promise<void> {
     try {
-      await this.messageRepository.create(sender, content);
+      await this.messageRepository.create(conversationId, sender, content);
     } catch (error) {
       // Log but don't throw - message persistence failure shouldn't break chat
       console.error(`Failed to persist ${sender} message`, {
