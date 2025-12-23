@@ -1,5 +1,13 @@
 import { prisma } from '../config/database.js';
-import type { Conversation } from '@prisma/client';
+import type { Conversation, Message } from '@prisma/client';
+import { DatabaseError } from '../shared/errors/custom-errors.js';
+
+/**
+ * Conversation with messages included
+ */
+export type ConversationWithMessages = Conversation & {
+  messages: Message[];
+};
 
 /**
  * Interface for Conversation Repository operations
@@ -7,6 +15,7 @@ import type { Conversation } from '@prisma/client';
 export interface IConversationRepository {
   create(): Promise<Conversation>;
   findBySessionId(sessionId: string): Promise<Conversation | null>;
+  getWithMessages(sessionId: string): Promise<ConversationWithMessages | null>;
 }
 
 /**
@@ -41,6 +50,28 @@ export class ConversationRepository implements IConversationRepository {
     } catch (error) {
       console.error('Failed to find conversation', error);
       throw new Error('Failed to find conversation');
+    }
+  }
+
+  /**
+   * Get conversation with all messages
+   * Messages ordered chronologically (oldest first)
+   */
+  async getWithMessages(sessionId: string): Promise<ConversationWithMessages | null> {
+    try {
+      const conversation = await prisma.conversation.findUnique({
+        where: { sessionId },
+        include: {
+          messages: {
+            orderBy: { timestamp: 'asc' },
+          },
+        },
+      });
+
+      return conversation;
+    } catch (error) {
+      console.error('Failed to fetch conversation with messages', { error, sessionId });
+      throw new DatabaseError('Failed to retrieve conversation history', error as Error);
     }
   }
 }

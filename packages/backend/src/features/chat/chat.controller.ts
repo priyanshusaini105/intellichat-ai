@@ -2,8 +2,9 @@ import type { ILLMProvider } from '../../integrations/llm/llm.interface.js';
 import type { IMessageRepository } from '../../repositories/message.repository.js';
 import type { IConversationRepository } from '../../repositories/conversation.repository.js';
 import type { IContextService } from '../../services/context.service.js';
-import { ValidationError } from '../../shared/errors/custom-errors.js';
-import type { ChatResponse } from './chat.types.js';
+import type { Message } from '@prisma/client';
+import { ValidationError, ConversationNotFoundError } from '../../shared/errors/custom-errors.js';
+import type { ChatResponse, ConversationHistoryResponse, MessageDTO } from './chat.types.js';
 
 const MAX_CONTEXT_MESSAGES = 5;
 
@@ -95,5 +96,40 @@ export class ChatController {
         message: content.slice(0, 100),
       });
     }
+  }
+
+  /**
+   * Get conversation history by sessionId
+   * @param sessionId - Session identifier (UUID)
+   * @returns Conversation history with all messages
+   * @throws ConversationNotFoundError if conversation doesn't exist
+   */
+  async getHistory(sessionId: string): Promise<ConversationHistoryResponse> {
+    const conversation = await this.conversationRepository.getWithMessages(sessionId);
+
+    if (!conversation) {
+      throw new ConversationNotFoundError(sessionId);
+    }
+
+    return {
+      conversationId: conversation.id,
+      sessionId: conversation.sessionId,
+      messageCount: conversation.messages.length,
+      messages: conversation.messages.map(this.formatMessage),
+      createdAt: conversation.createdAt.toISOString(),
+      updatedAt: conversation.updatedAt.toISOString(),
+    };
+  }
+
+  /**
+   * Format message for API response
+   */
+  private formatMessage(message: Message): MessageDTO {
+    return {
+      id: message.id,
+      sender: message.sender as 'user' | 'ai',
+      content: message.content,
+      timestamp: message.timestamp.toISOString(),
+    };
   }
 }
