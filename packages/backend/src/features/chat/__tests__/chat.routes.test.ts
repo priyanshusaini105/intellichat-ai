@@ -23,6 +23,7 @@ function createMockConversationRepository(): jest.Mocked<IConversationRepository
   return {
     create: jest.fn<any>(),
     findBySessionId: jest.fn<any>(),
+    getWithMessages: jest.fn<any>(),
   };
 }
 

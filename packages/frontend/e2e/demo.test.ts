@@ -18,7 +18,7 @@ test.describe('Chat Widget - Basic Functionality', () => {
 	test('clicking chat button opens the widget', async ({ page }) => {
 		const chatButton = page.getByRole('button', { name: /open support widget/i });
 		await chatButton.click();
-		
+
 		// Widget should be visible with welcome view
 		await expect(page.getByText('Hey 👋, how can we help you today?')).toBeVisible();
 	});
@@ -27,11 +27,11 @@ test.describe('Chat Widget - Basic Functionality', () => {
 		// Open widget
 		const chatButton = page.getByRole('button', { name: /open support widget/i });
 		await chatButton.click();
-		
+
 		// Close widget using header X button
 		const closeButton = page.getByRole('button', { name: /close widget/i });
 		await closeButton.click();
-		
+
 		// Widget should not be visible
 		await expect(page.getByText('Hey 👋, how can we help you today?')).not.toBeVisible();
 	});
@@ -50,12 +50,11 @@ test.describe('Chat Widget - Welcome View', () => {
 
 	test('clicking "Chat with us" transitions to chat view', async ({ page }) => {
 		await page.getByRole('button', { name: /chat with us/i }).click();
-		
+
 		// Should show chat view with message input
 		await expect(page.locator('textarea[placeholder*="Type your message"]')).toBeVisible();
 	});
 });
-
 
 test.describe('Chat Widget - Chat Functionality', () => {
 	test.beforeEach(async ({ page }) => {
@@ -71,21 +70,21 @@ test.describe('Chat Widget - Chat Functionality', () => {
 
 	test('can send a message', async ({ page }) => {
 		const messageInput = page.locator('textarea[placeholder*="Type your message"]');
-		
+
 		// Type and send message
 		await messageInput.fill('Hello, I need help');
 		await page.getByRole('button', { name: /send message/i }).click();
-		
+
 		// User message should appear
 		await expect(page.getByText('Hello, I need help')).toBeVisible();
 	});
 
 	test('can send message with Enter key', async ({ page }) => {
 		const messageInput = page.locator('textarea[placeholder*="Type your message"]');
-		
+
 		await messageInput.fill('Testing Enter key');
 		await messageInput.press('Enter');
-		
+
 		// Message should be sent
 		await expect(page.getByText('Testing Enter key')).toBeVisible();
 	});
@@ -100,7 +99,7 @@ test.describe('Chat Widget - Responsiveness', () => {
 	test('widget works on mobile viewport', async ({ page }) => {
 		await page.setViewportSize({ width: 375, height: 667 });
 		await page.goto('/');
-		
+
 		const chatButton = page.getByRole('button', { name: /open support widget/i });
 		await chatButton.click();
 		await expect(page.getByText('Hey 👋, how can we help you today?')).toBeVisible();

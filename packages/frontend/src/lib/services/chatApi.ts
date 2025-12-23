@@ -29,6 +29,14 @@ export interface ConversationHistory {
 	};
 }
 
+export interface ConversationSummary {
+	sessionId: string;
+	messageCount: number;
+	lastMessage: string;
+	createdAt: string;
+	updatedAt: string;
+}
+
 export interface ApiError {
 	success: false;
 	error: string;
@@ -60,6 +68,78 @@ class ChatApiService {
 		this.sessionId = null;
 		if (typeof window !== 'undefined') {
 			localStorage.removeItem('chatSessionId');
+		}
+	}
+
+	/**
+	 * Save conversation summary to localStorage
+	 */
+	private saveConversationSummary(
+		sessionId: string,
+		messageCount: number,
+		lastMessage: string
+	): void {
+		if (typeof window === 'undefined') return;
+
+		const conversations = this.getAllConversations();
+		const existingIndex = conversations.findIndex((c) => c.sessionId === sessionId);
+
+		const summary: ConversationSummary = {
+			sessionId,
+			messageCount,
+			lastMessage: lastMessage.slice(0, 100), // Truncate to 100 chars
+			createdAt:
+				existingIndex >= 0 ? conversations[existingIndex].createdAt : new Date().toISOString(),
+			updatedAt: new Date().toISOString()
+		};
+
+		if (existingIndex >= 0) {
+			conversations[existingIndex] = summary;
+		} else {
+			conversations.unshift(summary); // Add new conversations at the start
+		}
+
+		// Keep only last 50 conversations
+		const trimmed = conversations.slice(0, 50);
+		localStorage.setItem('chatConversations', JSON.stringify(trimmed));
+	}
+
+	/**
+	 * Get all saved conversations
+	 */
+	getAllConversations(): ConversationSummary[] {
+		if (typeof window === 'undefined') return [];
+
+		try {
+			const stored = localStorage.getItem('chatConversations');
+			return stored ? JSON.parse(stored) : [];
+		} catch {
+			return [];
+		}
+	}
+
+	/**
+	 * Load a specific conversation by sessionId
+	 */
+	async loadConversation(sessionId: string): Promise<ConversationHistory | null> {
+		this.sessionId = sessionId;
+		this.saveSession(sessionId);
+		return this.getHistory();
+	}
+
+	/**
+	 * Delete a conversation from history
+	 */
+	deleteConversation(sessionId: string): void {
+		if (typeof window === 'undefined') return;
+
+		const conversations = this.getAllConversations();
+		const filtered = conversations.filter((c) => c.sessionId !== sessionId);
+		localStorage.setItem('chatConversations', JSON.stringify(filtered));
+
+		// If deleted conversation was current, clear session
+		if (this.sessionId === sessionId) {
+			this.clearSession();
 		}
 	}
 
@@ -101,6 +181,10 @@ class ChatApiService {
 			// Save session ID for continuing conversation
 			if (data.sessionId) {
 				this.saveSession(data.sessionId);
+
+				// Save conversation summary (get message count from current state)
+				// We'll pass the user message as lastMessage for now
+				this.saveConversationSummary(data.sessionId, 0, message);
 			}
 
 			return data;

@@ -6,8 +6,8 @@
 	class="relative min-h-screen overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-100"
 >
 	<div class="pointer-events-none absolute inset-0 opacity-70">
-		<div class="absolute -left-32 top-10 h-72 w-72 rounded-full bg-blue-200 blur-3xl"></div>
-		<div class="absolute right-0 top-20 h-64 w-64 rounded-full bg-indigo-200 blur-3xl"></div>
+		<div class="absolute top-10 -left-32 h-72 w-72 rounded-full bg-blue-200 blur-3xl"></div>
+		<div class="absolute top-20 right-0 h-64 w-64 rounded-full bg-indigo-200 blur-3xl"></div>
 	</div>
 
 	<div
@@ -20,7 +20,7 @@
 				<span class="h-2 w-2 rounded-full bg-[#1a73e8]"></span>
 				Live preview
 			</div>
-			<h1 class="text-4xl font-semibold leading-tight text-slate-900 md:text-5xl">
+			<h1 class="text-4xl leading-tight font-semibold text-slate-900 md:text-5xl">
 				Spur Support chatbot widget
 			</h1>
 			<p class="max-w-xl text-lg text-slate-600">
@@ -46,4 +46,3 @@
 		<ChatWidget />
 	</div>
 </main>
-
