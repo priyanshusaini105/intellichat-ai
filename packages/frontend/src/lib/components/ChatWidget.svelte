@@ -10,6 +10,8 @@
 		Clock,
 		MessageSquare
 	} from 'lucide-svelte';
+	import { chatApi } from '$lib/services/chatApi';
+	import { onMount } from 'svelte';
 
 	type ChatView = 'welcome' | 'chat' | 'details';
 
@@ -26,6 +28,8 @@
 	let input = $state('');
 	let hasAskedDetails = $state(false);
 	let pendingMessage: string | null = $state(null);
+	let isLoading = $state(false);
+	let error: string | null = $state(null);
 	let details = $state({
 		name: '',
 		email: '',
@@ -35,15 +39,48 @@
 	let messageListRef: HTMLDivElement | undefined = $state();
 
 	const quickQuestions = [
-		'Hey, I want to subscribe to Spur.',
-		'I want to book a demo call.',
+		'What is your shipping policy?',
+		'How do I return an item?',
 		'What are your support hours?'
 	];
+
+	// Load conversation history on mount
+	onMount(async () => {
+		try {
+			const history = await chatApi.getHistory();
+			if (history?.data?.messages && history.data.messages.length > 0) {
+				// Convert API messages to UI format
+				messages = history.data.messages.map((msg) => ({
+					id: msg.id,
+					sender: msg.sender === 'ai' ? 'agent' : 'user',
+					text: msg.content,
+					time: formatTime(msg.timestamp)
+				}));
+				view = 'chat';
+				hasAskedDetails = true;
+			}
+		} catch (err) {
+			console.error('Failed to load history:', err);
+			// Continue without history
+		}
+	});
 
 	function makeId() {
 		return typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
 			? crypto.randomUUID()
 			: `id-${Math.random().toString(16).slice(2)}`;
+	}
+
+	function formatTime(timestamp: string): string {
+		const date = new Date(timestamp);
+		const now = new Date();
+		const diffMs = now.getTime() - date.getTime();
+		const diffMins = Math.floor(diffMs / 60000);
+
+		if (diffMins < 1) return 'just now';
+		if (diffMins < 60) return `${diffMins}m ago`;
+		if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`;
+		return date.toLocaleDateString();
 	}
 
 	function scrollToBottom() {
@@ -62,27 +99,42 @@
 		scrollToBottom();
 	}
 
-	function simulateAgentReply(prompt: string) {
-		const replyText = prompt.toLowerCase().includes('demo')
-			? 'I can help with a demo. What time works best for you?'
-			: prompt.toLowerCase().includes('subscribe')
-				? 'Great! I can guide you through plans and pricing.'
-				: "Thanks for reaching out! Tell me a bit more and I'll help right away.";
+	async function sendMessageToApi(userMessage: string) {
+		isLoading = true;
+		error = null;
 
-		setTimeout(() => {
+		try {
+			const response = await chatApi.sendMessage(userMessage);
+
+			// Add AI response
 			addMessages([
 				{
 					id: makeId(),
 					sender: 'agent',
-					text: replyText,
+					text: response.reply,
 					time: 'just now'
 				}
 			]);
-		}, 600);
+		} catch (err) {
+			error = err instanceof Error ? err.message : 'Failed to send message';
+			console.error('Error sending message:', err);
+
+			// Add error message
+			addMessages([
+				{
+					id: makeId(),
+					sender: 'agent',
+					text: "I'm having trouble connecting right now. Please try again in a moment.",
+					time: 'just now'
+				}
+			]);
+		} finally {
+			isLoading = false;
+		}
 	}
 
-	function handleSend() {
-		if (!input.trim()) return;
+	async function handleSend() {
+		if (!input.trim() || isLoading) return;
 
 		const userMessage = input.trim();
 		input = '';
@@ -93,6 +145,7 @@
 			return;
 		}
 
+		// Add user message immediately
 		addMessages([
 			{
 				id: makeId(),
@@ -102,10 +155,13 @@
 			}
 		]);
 
-		simulateAgentReply(userMessage);
+		// Send to API
+		await sendMessageToApi(userMessage);
 	}
 
-	function handleQuickQuestion(question: string) {
+	async function handleQuickQuestion(question: string) {
+		if (isLoading) return;
+
 		view = 'chat';
 		input = '';
 
@@ -115,6 +171,7 @@
 			return;
 		}
 
+		// Add user message
 		addMessages([
 			{
 				id: makeId(),
@@ -124,15 +181,17 @@
 			}
 		]);
 
-		simulateAgentReply(question);
+		// Send to API
+		await sendMessageToApi(question);
 	}
 
-	function handleDetailSubmit(event: SubmitEvent) {
+	async function handleDetailSubmit(event: SubmitEvent) {
 		event.preventDefault();
 		hasAskedDetails = true;
 		view = 'chat';
 
 		if (pendingMessage) {
+			// Add user message
 			addMessages([
 				{
 					id: makeId(),
@@ -142,6 +201,7 @@
 				}
 			]);
 
+			// Add acknowledgment
 			addMessages([
 				{
 					id: makeId(),
@@ -151,7 +211,8 @@
 				}
 			]);
 
-			simulateAgentReply(pendingMessage);
+			// Send pending message to API
+			await sendMessageToApi(pendingMessage);
 			pendingMessage = null;
 		} else {
 			addMessages([
@@ -165,6 +226,15 @@
 		}
 	}
 
+	function handleNewConversation() {
+		if (confirm('Start a new conversation? This will clear your current chat history.')) {
+			chatApi.clearSession();
+			messages = [];
+			error = null;
+			view = 'welcome';
+		}
+	}
+
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
@@ -172,7 +242,7 @@
 		}
 	}
 
-	function handleSkipDetails() {
+	async function handleSkipDetails() {
 		hasAskedDetails = true;
 		view = 'chat';
 		if (pendingMessage) {
@@ -184,7 +254,7 @@
 					time: 'just now'
 				}
 			]);
-			simulateAgentReply(pendingMessage);
+			await sendMessageToApi(pendingMessage);
 			pendingMessage = null;
 		}
 	}
@@ -242,13 +312,27 @@
 						<p class="text-xs text-white/80">We're online</p>
 					</div>
 				</div>
-				<button
-					onclick={() => (isOpen = false)}
-					class="rounded-full p-2 text-white transition hover:bg-white/10"
-					aria-label="Close widget"
-				>
-					<X class="h-5 w-5" />
-				</button>
+				<div class="flex items-center gap-1">
+					{#if view === 'chat' && messages.length > 0}
+						<button
+							onclick={handleNewConversation}
+							class="rounded-full p-2 text-white transition hover:bg-white/10"
+							aria-label="New conversation"
+							title="Start new conversation"
+						>
+							<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+							</svg>
+						</button>
+					{/if}
+					<button
+						onclick={() => (isOpen = false)}
+						class="rounded-full p-2 text-white transition hover:bg-white/10"
+						aria-label="Close widget"
+					>
+						<X class="h-5 w-5" />
+					</button>
+				</div>
 			</div>
 
 			<!-- Content -->
@@ -312,6 +396,25 @@
 							class="thin-scrollbar flex-1 space-y-4 overflow-y-auto pr-1"
 							bind:this={messageListRef}
 						>
+							{#if error}
+								<div class="rounded-lg bg-red-50 border border-red-200 p-3 mb-3 animate-fade-up">
+									<div class="flex items-start gap-2">
+										<svg class="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+										</svg>
+										<div class="flex-1">
+											<p class="text-sm text-red-800">{error}</p>
+											<button
+												onclick={() => error = null}
+												class="mt-1 text-xs text-red-600 hover:text-red-700 underline"
+											>
+												Dismiss
+											</button>
+										</div>
+									</div>
+								</div>
+							{/if}
+
 							{#each messages as message (message.id)}
 								<div class={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
 									<div
@@ -332,6 +435,21 @@
 									</div>
 								</div>
 							{/each}
+
+							{#if isLoading}
+								<div class="flex justify-start animate-fade-up">
+									<div class="bg-slate-100 text-slate-800 max-w-[80%] rounded-2xl px-4 py-3 shadow-sm">
+										<div class="flex items-center gap-2">
+											<div class="flex gap-1">
+												<div class="h-2 w-2 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 0ms"></div>
+												<div class="h-2 w-2 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 150ms"></div>
+												<div class="h-2 w-2 rounded-full bg-slate-400 animate-bounce" style="animation-delay: 300ms"></div>
+											</div>
+											<p class="text-xs text-slate-500">Agent is typing...</p>
+										</div>
+									</div>
+								</div>
+							{/if}
 						</div>
 
 						<div class="mt-4 rounded-2xl border border-slate-200 bg-white p-3 shadow-inner">
@@ -345,11 +463,18 @@
 								></textarea>
 								<button
 									onclick={handleSend}
-									class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#1a73e8] text-white shadow-md transition hover:bg-[#155ec2] disabled:cursor-not-allowed disabled:bg-slate-300"
-									disabled={!input.trim()}
+									class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#1a73e8] text-white shadow-md transition hover:bg-[#155ec2] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:opacity-50"
+									disabled={!input.trim() || isLoading}
 									aria-label="Send message"
 								>
-									<Send class="h-5 w-5" />
+									{#if isLoading}
+										<svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+											<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+											<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+										</svg>
+									{:else}
+										<Send class="h-5 w-5" />
+									{/if}
 								</button>
 							</div>
 						</div>

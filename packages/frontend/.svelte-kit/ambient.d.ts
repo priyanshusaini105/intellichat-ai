@@ -26,6 +26,7 @@
  * ```
  */
 declare module '$env/static/private' {
+	export const VITE_API_URL: string;
 	export const SHELL: string;
 	export const LSCOLORS: string;
 	export const npm_command: string;
@@ -80,7 +81,6 @@ declare module '$env/static/private' {
 	export const ZDOTDIR: string;
 	export const USER: string;
 	export const npm_config_frozen_lockfile: string;
-	export const GIT_PAGER: string;
 	export const VSCODE_GIT_IPC_HANDLE: string;
 	export const HYPRLAND_INSTANCE_SIGNATURE: string;
 	export const DISPLAY: string;
@@ -141,6 +141,7 @@ declare module '$env/static/public' {
  */
 declare module '$env/dynamic/private' {
 	export const env: {
+		VITE_API_URL: string;
 		SHELL: string;
 		LSCOLORS: string;
 		npm_command: string;
@@ -195,7 +196,6 @@ declare module '$env/dynamic/private' {
 		ZDOTDIR: string;
 		USER: string;
 		npm_config_frozen_lockfile: string;
-		GIT_PAGER: string;
 		VSCODE_GIT_IPC_HANDLE: string;
 		HYPRLAND_INSTANCE_SIGNATURE: string;
 		DISPLAY: string;
