@@ -92,3 +92,13 @@ export class ConversationNotFoundError extends AppError {
   }
 }
 
+/**
+ * Custom error class for general rate limit errors (IP, session-based)
+ */
+export class RateLimitError extends AppError {
+  constructor(message: string = 'Too many requests. Please try again later.') {
+    super(message, 429);
+    this.name = 'RateLimitError';
+    Object.setPrototypeOf(this, RateLimitError.prototype);
+  }
+}
