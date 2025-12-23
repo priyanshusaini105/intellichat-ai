@@ -1,7 +1,8 @@
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { ConversationRepository } from '../conversation.repository.js';
 import { prisma } from '../../config/database.js';
 
-jest.mock('../../config/database', () => ({
+jest.mock('../../config/database.js', () => ({
   prisma: {
     conversation: {
       create: jest.fn(),
@@ -12,7 +13,7 @@ jest.mock('../../config/database', () => ({
 
 describe('ConversationRepository', () => {
   let repository: ConversationRepository;
-  const mockPrisma = prisma as jest.Mocked<typeof prisma>;
+  const mockPrisma = prisma as unknown as jest.Mocked<typeof prisma>;
 
   beforeEach(() => {
     repository = new ConversationRepository();

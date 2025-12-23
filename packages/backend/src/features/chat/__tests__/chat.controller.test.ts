@@ -169,13 +169,13 @@ describe('ChatController', () => {
       await controller.handleMessage('Hello');
 
       const calls = mockMessageRepo.create.mock.calls;
-      expect(calls[0][0]).toBe('conv-123'); // conversationId
-      expect(calls[0][1]).toBe('user');
-      expect(calls[0][2]).toBe('Hello');
+      expect(calls[0]![0]).toBe('conv-123'); // conversationId
+      expect(calls[0]![1]).toBe('user');
+      expect(calls[0]![2]).toBe('Hello');
       
-      expect(calls[1][0]).toBe('conv-123'); // conversationId
-      expect(calls[1][1]).toBe('ai');
-      expect(calls[1][2]).toBe('AI response');
+      expect(calls[1]![0]).toBe('conv-123'); // conversationId
+      expect(calls[1]![1]).toBe('ai');
+      expect(calls[1]![2]).toBe('AI response');
     });
   });
 
