@@ -113,3 +113,6 @@ AGENTS.md
 Thumbs.db
 ehthumbs.db
 Desktop.ini.svelte-kit/
+coverage
+Desktop.ini
+.svelte-kit/

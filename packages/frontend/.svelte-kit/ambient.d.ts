@@ -80,6 +80,7 @@ declare module '$env/static/private' {
 	export const ZDOTDIR: string;
 	export const USER: string;
 	export const npm_config_frozen_lockfile: string;
+	export const GIT_PAGER: string;
 	export const VSCODE_GIT_IPC_HANDLE: string;
 	export const HYPRLAND_INSTANCE_SIGNATURE: string;
 	export const DISPLAY: string;
@@ -110,6 +111,7 @@ declare module '$env/static/private' {
 	export const OLDPWD: string;
 	export const TERM_PROGRAM: string;
 	export const NODE_ENV: string;
+	export const PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS: string;
 }
 
 /**
@@ -193,6 +195,7 @@ declare module '$env/dynamic/private' {
 		ZDOTDIR: string;
 		USER: string;
 		npm_config_frozen_lockfile: string;
+		GIT_PAGER: string;
 		VSCODE_GIT_IPC_HANDLE: string;
 		HYPRLAND_INSTANCE_SIGNATURE: string;
 		DISPLAY: string;
@@ -223,6 +226,7 @@ declare module '$env/dynamic/private' {
 		OLDPWD: string;
 		TERM_PROGRAM: string;
 		NODE_ENV: string;
+		PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}
