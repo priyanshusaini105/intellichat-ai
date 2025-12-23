@@ -3,9 +3,12 @@ import cors from 'cors';
 import { createChatRouter } from './features/chat/chat.routes.js';
 import { errorHandler } from './shared/middleware/error-handler.js';
 import type { ILLMProvider } from './integrations/llm/llm.interface.js';
+import type { IMessageRepository } from './repositories/message.repository.js';
+import { prisma } from './config/database.js';
 
 export interface AppDependencies {
   llmProvider: ILLMProvider;
+  messageRepository: IMessageRepository;
 }
 
 /**
@@ -18,16 +21,36 @@ export function createApp(dependencies: AppDependencies): express.Application {
   app.use(cors());
   app.use(express.json());
 
-  // Health check
-  app.get('/health', (_req, res) => {
-    res.json({ status: 'ok', timestamp: Date.now() });
+  // Health check with database status
+  app.get('/health', async (_req, res) => {
+    const health = {
+      status: 'ok',
+      timestamp: Date.now(),
+      database: await checkDatabase(),
+    };
+    
+    const statusCode = health.database === 'connected' ? 200 : 503;
+    res.status(statusCode).json(health);
   });
 
   // Routes
-  app.use('/api/chat', createChatRouter(dependencies.llmProvider));
+  app.use('/api/chat', createChatRouter(dependencies.llmProvider, dependencies.messageRepository));
 
   // Error handling (must be last)
   app.use(errorHandler);
 
   return app;
+}
+
+/**
+ * Check database connectivity
+ */
+async function checkDatabase(): Promise<string> {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    return 'connected';
+  } catch (error) {
+    console.error('Database health check failed', error);
+    return 'disconnected';
+  }
 }

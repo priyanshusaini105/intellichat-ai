@@ -5,18 +5,37 @@ import { createChatRouter } from '../chat.routes.js';
 import { createMockLLMProvider } from '../../../../tests/helpers/mock-llm.js';
 import { LLMServiceError } from '../../../shared/errors/custom-errors.js';
 import { errorHandler } from '../../../shared/middleware/error-handler.js';
+import type { IMessageRepository } from '../../../repositories/message.repository.js';
+
+// Mock message repository helper
+function createMockMessageRepository(): jest.Mocked<IMessageRepository> {
+  return {
+    create: jest.fn<any>(),
+    count: jest.fn<any>(),
+  };
+}
 
 describe('Chat Routes', () => {
   let app: express.Application;
   let mockLLMProvider: ReturnType<typeof createMockLLMProvider>;
+  let mockMessageRepo: jest.Mocked<IMessageRepository>;
 
   beforeEach(() => {
     mockLLMProvider = createMockLLMProvider();
+    mockMessageRepo = createMockMessageRepository();
+    
+    // Default successful responses
+    mockMessageRepo.create.mockResolvedValue({
+      id: 'msg-id',
+      sender: 'user',
+      content: 'test',
+      timestamp: new Date(),
+    });
     
     // Create minimal Express app for testing
     app = express();
     app.use(express.json());
-    app.use('/api/chat', createChatRouter(mockLLMProvider));
+    app.use('/api/chat', createChatRouter(mockLLMProvider, mockMessageRepo));
     app.use(errorHandler);
   });
 
