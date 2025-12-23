@@ -1,5 +1,8 @@
 <script lang="ts">
+<<<<<<< HEAD
 	import { onMount } from 'svelte';
+=======
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 	import {
 		ArrowLeft,
 		MessageCircle,
@@ -8,10 +11,15 @@
 		Wand2,
 		X,
 		Zap,
+<<<<<<< HEAD
 		Phone,
 		Clock,
 		MessageSquare,
 		ArrowUpRight
+=======
+		Clock,
+		MessageSquare
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 	} from 'lucide-svelte';
 
 	type ChatView = 'welcome' | 'chat' | 'details';
@@ -23,6 +31,7 @@
 		time: string;
 	}
 
+<<<<<<< HEAD
 	let isOpen = false;
 	let view: ChatView = 'welcome';
 	let messages: ChatMessage[] = [];
@@ -36,6 +45,21 @@
 	};
 
 	let messageListRef: HTMLDivElement;
+=======
+	let isOpen = $state(false);
+	let view: ChatView = $state('welcome');
+	let messages: ChatMessage[] = $state([]);
+	let input = $state('');
+	let hasAskedDetails = $state(false);
+	let pendingMessage: string | null = $state(null);
+	let details = $state({
+		name: '',
+		email: '',
+		phone: ''
+	});
+
+	let messageListRef: HTMLDivElement | undefined = $state();
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 
 	const quickQuestions = [
 		'Hey, I want to subscribe to Spur.',
@@ -70,7 +94,11 @@
 			? 'I can help with a demo. What time works best for you?'
 			: prompt.toLowerCase().includes('subscribe')
 				? 'Great! I can guide you through plans and pricing.'
+<<<<<<< HEAD
 				: 'Thanks for reaching out! Tell me a bit more and I\'ll help right away.';
+=======
+				: "Thanks for reaching out! Tell me a bit more and I'll help right away.";
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 
 		setTimeout(() => {
 			addMessages([
@@ -90,7 +118,10 @@
 		const userMessage = input.trim();
 		input = '';
 
+<<<<<<< HEAD
 		// Gate the very first message behind the details form
+=======
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 		if (messages.length === 0 && !hasAskedDetails) {
 			pendingMessage = userMessage;
 			view = 'details';
@@ -169,10 +200,13 @@
 		}
 	}
 
+<<<<<<< HEAD
 	function handleWhatsapp() {
 		window.open('https://wa.me/', '_blank');
 	}
 
+=======
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
@@ -197,11 +231,18 @@
 		}
 	}
 
+<<<<<<< HEAD
 	const headerTitle = view === 'welcome' ? 'Spur Support' : 'Spur Support';
 	const headerIcon = view === 'welcome' ? Sparkles : MessageCircle;
 
 	onMount(() => {
 		// Ensure scrollToBottom is called when messages update
+=======
+	const headerTitle = $derived(view === 'welcome' ? 'Spur Support' : 'Spur Support');
+	const headerIcon = $derived(view === 'welcome' ? Sparkles : MessageCircle);
+
+	$effect(() => {
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 		if (messages.length > 0) {
 			scrollToBottom();
 		}
@@ -210,12 +251,20 @@
 
 <!-- Floating button - always visible -->
 <button
+<<<<<<< HEAD
 	on:click={() => (isOpen = !isOpen)}
+=======
+	onclick={() => (isOpen = !isOpen)}
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 	class="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#1a73e8] text-white shadow-xl shadow-blue-200 transition hover:scale-105"
 	aria-label={isOpen ? 'Close support widget' : 'Open support widget'}
 >
 	{#if isOpen}
+<<<<<<< HEAD
 		<X class="h-6 w-6" />
+=======
+		<X class="h-6 w-6 animate-rotate-in" />
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 	{:else}
 		<MessageSquare class="h-6 w-6" />
 	{/if}
@@ -232,7 +281,11 @@
 				<div class="flex items-center gap-2">
 					{#if view !== 'welcome'}
 						<button
+<<<<<<< HEAD
 							on:click={() => (view = 'welcome')}
+=======
+							onclick={() => (view = 'welcome')}
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 							class="rounded-full p-2 text-white transition hover:bg-white/10"
 							aria-label="Go back"
 						>
@@ -240,7 +293,15 @@
 						</button>
 					{/if}
 					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
+<<<<<<< HEAD
 						<svelte:component this={headerIcon} class="h-5 w-5" />
+=======
+						{#if view === 'welcome'}
+							<Sparkles class="h-5 w-5" />
+						{:else}
+							<MessageCircle class="h-5 w-5" />
+						{/if}
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 					</div>
 					<div>
 						<p class="text-sm font-semibold leading-tight">{headerTitle}</p>
@@ -248,7 +309,11 @@
 					</div>
 				</div>
 				<button
+<<<<<<< HEAD
 					on:click={() => (isOpen = false)}
+=======
+					onclick={() => (isOpen = false)}
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 					class="rounded-full p-2 text-white transition hover:bg-white/10"
 					aria-label="Close widget"
 				>
@@ -272,7 +337,13 @@
 									</h2>
 									<p class="text-sm text-white/80">We usually respond within 10 minutes</p>
 								</div>
+<<<<<<< HEAD
 								<div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
+=======
+								<div
+									class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur"
+								>
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 									<Sparkles class="h-6 w-6" />
 								</div>
 							</div>
@@ -283,13 +354,18 @@
 								<p class="text-sm font-semibold text-slate-800">Start a conversation</p>
 								<p class="text-xs text-slate-500">We usually respond within 10 minutes</p>
 								<button
+<<<<<<< HEAD
 									on:click={() => (view = 'chat')}
+=======
+									onclick={() => (view = 'chat')}
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 									class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a73e8] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-[#155ec2]"
 								>
 									<span>Chat with us</span>
 									<Zap class="h-4 w-4" />
 								</button>
 							</div>
+<<<<<<< HEAD
 
 							<button
 								on:click={handleWhatsapp}
@@ -306,6 +382,8 @@
 								</div>
 								<ArrowUpRight class="h-5 w-5 text-slate-400" />
 							</button>
+=======
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 						</div>
 
 						<div class="space-y-2">
@@ -315,7 +393,11 @@
 							<div class="flex flex-wrap gap-2">
 								{#each quickQuestions as question (question)}
 									<button
+<<<<<<< HEAD
 										on:click={() => handleQuickQuestion(question)}
+=======
+										onclick={() => handleQuickQuestion(question)}
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 										class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-blue-200 hover:bg-blue-50"
 									>
 										{question}
@@ -357,6 +439,7 @@
 							<div class="flex items-center gap-2">
 								<textarea
 									bind:value={input}
+<<<<<<< HEAD
 									on:keydown={handleKeyDown}
 									placeholder="Type your message..."
 									rows="1"
@@ -364,6 +447,15 @@
 								/>
 								<button
 									on:click={handleSend}
+=======
+									onkeydown={handleKeyDown}
+									placeholder="Type your message..."
+									rows="1"
+									class="min-h-[44px] flex-1 resize-none bg-transparent text-sm text-slate-800 outline-none"
+								></textarea>
+								<button
+									onclick={handleSend}
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 									class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#1a73e8] text-white shadow-md transition hover:bg-[#155ec2] disabled:cursor-not-allowed disabled:bg-slate-300"
 									disabled={!input.trim()}
 									aria-label="Send message"
@@ -375,7 +467,11 @@
 					</div>
 				{:else if view === 'details'}
 					<!-- Details Form -->
+<<<<<<< HEAD
 					<form class="space-y-4" on:submit={handleDetailSubmit}>
+=======
+					<form class="space-y-4" onsubmit={handleDetailSubmit}>
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 						<div class="space-y-3">
 							<p class="text-sm text-slate-600">
 								Please share your details so we can assist you better:
@@ -416,7 +512,7 @@
 						<div class="flex items-center justify-end gap-3 pt-2">
 							<button
 								type="button"
-								on:click={handleSkipDetails}
+								onclick={handleSkipDetails}
 								class="text-sm font-semibold text-slate-600 underline underline-offset-4 hover:text-slate-900"
 							>
 								Skip for now
@@ -434,9 +530,19 @@
 			</div>
 
 			<!-- Footer -->
+<<<<<<< HEAD
 			<div class="flex items-center justify-between border-t border-slate-100 px-5 py-3 text-xs text-slate-500">
 				<div class="flex items-center gap-2 text-slate-600">
 					<div class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-50 text-[#1a73e8]">
+=======
+			<div
+				class="flex items-center justify-between border-t border-slate-100 px-5 py-3 text-xs text-slate-500"
+			>
+				<div class="flex items-center gap-2 text-slate-600">
+					<div
+						class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-50 text-[#1a73e8]"
+					>
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 						<Wand2 class="h-4 w-4" />
 					</div>
 					<span>Powered by spurnow.com</span>
@@ -483,6 +589,24 @@
 		}
 	}
 
+<<<<<<< HEAD
+=======
+	:global(.animate-rotate-in) {
+		animation: rotate-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+	}
+
+	@keyframes rotate-in {
+		from {
+			opacity: 0;
+			transform: rotate(-180deg) scale(0.8);
+		}
+		to {
+			opacity: 1;
+			transform: rotate(0deg) scale(1);
+		}
+	}
+
+>>>>>>> 4873142dd03b431e7db353b563e05c3027b1510b
 	:global(.thin-scrollbar) {
 		scrollbar-width: thin;
 		scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
