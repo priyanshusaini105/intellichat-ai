@@ -14,10 +14,12 @@
   "license": "ISC",
   "packageManager": "pnpm@10.24.0",
   "devDependencies": {
+    "@types/ioredis": "^5.0.0",
     "prisma": "^7.2.0",
     "shadcn": "^3.6.2"
   },
   "dependencies": {
-    "@prisma/client": "^7.2.0"
+    "@prisma/client": "^7.2.0",
+    "ioredis": "^5.8.2"
   }
 }
