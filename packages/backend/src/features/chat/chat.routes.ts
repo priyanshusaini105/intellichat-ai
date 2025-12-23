@@ -9,6 +9,7 @@ import type { IContextService } from '../../services/context.service.js';
 import type { ChatRequest, ApiResponse, ConversationHistoryResponse } from './chat.types.js';
 import { validateRequest } from '../../shared/middleware/validation.js';
 import { validateParams } from '../../shared/middleware/validate-params.js';
+import { ipRateLimiter, sessionRateLimiter } from '../../shared/middleware/rate-limiter.js';
 import { ChatMessageSchema } from './chat.validation.js';
 
 // Session ID validation schema for path parameters
@@ -33,9 +34,13 @@ export function createChatRouter(
     contextService
   );
 
-  // Apply validation middleware to POST endpoint
+  // Apply IP-based rate limiting to all chat routes
+  router.use(ipRateLimiter);
+
+  // POST /api/chat - Send message endpoint with session-based rate limiting
   router.post(
     '/',
+    sessionRateLimiter, // Limit messages per session
     validateRequest(ChatMessageSchema),
     async (req: Request, res: Response, next: NextFunction) => {
       try {

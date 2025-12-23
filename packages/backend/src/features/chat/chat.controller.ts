@@ -5,8 +5,10 @@ import type { IContextService } from '../../services/context.service.js';
 import type { Message } from '@prisma/client';
 import { ValidationError, ConversationNotFoundError } from '../../shared/errors/custom-errors.js';
 import type { ChatResponse, ConversationHistoryResponse, MessageDTO } from './chat.types.js';
+import { cacheService } from '../../services/cache.service.js';
 
 const MAX_CONTEXT_MESSAGES = 5;
+const CONVERSATION_CACHE_TTL = 600; // 10 minutes
 
 /**
  * Chat controller handling message processing logic
@@ -58,6 +60,9 @@ export class ChatController {
       // 5. Save AI response to database (linked to conversation)
       await this.saveMessage(conversation.id, 'ai', reply);
 
+      // 6. Invalidate cache since conversation was updated
+      await cacheService.delete(`conversation:${conversation.sessionId}`);
+
       return { reply, sessionId: conversation.sessionId };
     } catch (error) {
       console.error('Error in chat controller', error);
@@ -105,13 +110,22 @@ export class ChatController {
    * @throws ConversationNotFoundError if conversation doesn't exist
    */
   async getHistory(sessionId: string): Promise<ConversationHistoryResponse> {
+    // Try to get from cache first
+    const cacheKey = `conversation:${sessionId}`;
+    const cached = await cacheService.get<ConversationHistoryResponse>(cacheKey);
+
+    if (cached) {
+      return cached;
+    }
+
+    // Cache miss - fetch from database
     const conversation = await this.conversationRepository.getWithMessages(sessionId);
 
     if (!conversation) {
       throw new ConversationNotFoundError(sessionId);
     }
 
-    return {
+    const response: ConversationHistoryResponse = {
       conversationId: conversation.id,
       sessionId: conversation.sessionId,
       messageCount: conversation.messages.length,
@@ -119,6 +133,11 @@ export class ChatController {
       createdAt: conversation.createdAt.toISOString(),
       updatedAt: conversation.updatedAt.toISOString(),
     };
+
+    // Cache for 10 minutes
+    await cacheService.set(cacheKey, response, CONVERSATION_CACHE_TTL);
+
+    return response;
   }
 
   /**

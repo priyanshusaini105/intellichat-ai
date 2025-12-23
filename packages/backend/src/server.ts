@@ -1,6 +1,7 @@
 import { createApp } from './app.js';
 import { getEnvConfig } from './config/env.js';
 import { connectDatabase, disconnectDatabase } from './config/database.js';
+import { connectRedis, disconnectRedis } from './config/redis.js';
 import { GroqProvider } from './integrations/llm/groq.provider.js';
 import { MessageRepository } from './repositories/message.repository.js';
 import { ConversationRepository } from './repositories/conversation.repository.js';
@@ -14,7 +15,10 @@ async function startServer() {
     // 1. Connect to database
     await connectDatabase();
 
-    // 2. Initialize dependencies
+    // 2. Connect to Redis (optional - continues without cache if unavailable)
+    await connectRedis();
+
+    // 3. Initialize dependencies
     const llmProvider = new GroqProvider(config.groqApiKey);
     const messageRepository = new MessageRepository();
     const conversationRepository = new ConversationRepository();
@@ -41,6 +45,7 @@ async function startServer() {
         console.log('HTTP server closed');
       });
       await disconnectDatabase();
+      await disconnectRedis();
       process.exit(0);
     };
 
