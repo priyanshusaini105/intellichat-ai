@@ -7,12 +7,14 @@ import { LLMServiceError } from '../../../shared/errors/custom-errors.js';
 import { errorHandler } from '../../../shared/middleware/error-handler.js';
 import type { IMessageRepository } from '../../../repositories/message.repository.js';
 import type { IConversationRepository } from '../../../repositories/conversation.repository.js';
+import type { IContextService } from '../../../services/context.service.js';
 
 // Mock message repository helper
 function createMockMessageRepository(): jest.Mocked<IMessageRepository> {
   return {
     create: jest.fn<any>(),
     count: jest.fn<any>(),
+    getRecentMessages: jest.fn<any>(),
   };
 }
 
@@ -24,16 +26,26 @@ function createMockConversationRepository(): jest.Mocked<IConversationRepository
   };
 }
 
+// Mock context service helper
+function createMockContextService(): jest.Mocked<IContextService> {
+  return {
+    formatForLLM: jest.fn<any>(),
+    limitContext: jest.fn<any>(),
+  };
+}
+
 describe('Chat Routes', () => {
   let app: express.Application;
   let mockLLMProvider: ReturnType<typeof createMockLLMProvider>;
   let mockMessageRepo: jest.Mocked<IMessageRepository>;
   let mockConversationRepo: jest.Mocked<IConversationRepository>;
+  let mockContextService: jest.Mocked<IContextService>;
 
   beforeEach(() => {
     mockLLMProvider = createMockLLMProvider();
     mockMessageRepo = createMockMessageRepository();
     mockConversationRepo = createMockConversationRepository();
+    mockContextService = createMockContextService();
     
     // Default successful responses
     mockMessageRepo.create.mockResolvedValue({
@@ -44,17 +56,27 @@ describe('Chat Routes', () => {
       timestamp: new Date(),
     });
 
+    mockMessageRepo.getRecentMessages.mockResolvedValue([]);
+
     mockConversationRepo.create.mockResolvedValue({
       id: 'conv-123',
       sessionId: 'session-abc',
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+
+    mockContextService.formatForLLM.mockReturnValue([]);
+    mockContextService.limitContext.mockImplementation((messages) => messages);
     
     // Create minimal Express app for testing
     app = express();
     app.use(express.json());
-    app.use('/api/chat', createChatRouter(mockLLMProvider, mockMessageRepo, mockConversationRepo));
+    app.use('/api/chat', createChatRouter(
+      mockLLMProvider, 
+      mockMessageRepo, 
+      mockConversationRepo,
+      mockContextService
+    ));
     app.use(errorHandler);
   });
 
@@ -139,7 +161,8 @@ describe('Chat Routes', () => {
 
       expect(response.body.reply).toContain('shipping');
       expect(mockLLMProvider.generateReply).toHaveBeenCalledWith(
-        'What is your shipping policy?'
+        'What is your shipping policy?',
+        expect.any(Array)
       );
     });
 
@@ -155,7 +178,8 @@ describe('Chat Routes', () => {
 
       expect(response.body.reply).toContain('return');
       expect(mockLLMProvider.generateReply).toHaveBeenCalledWith(
-        'What is your return policy?'
+        'What is your return policy?',
+        expect.any(Array)
       );
     });
 
@@ -166,7 +190,10 @@ describe('Chat Routes', () => {
         .post('/api/chat')
         .send({ message: 'Test message' });
 
-      expect(mockLLMProvider.generateReply).toHaveBeenCalledWith('Test message');
+      expect(mockLLMProvider.generateReply).toHaveBeenCalledWith(
+        'Test message',
+        expect.any(Array)
+      );
     });
 
     it('should handle non-string message type', async () => {

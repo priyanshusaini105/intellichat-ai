@@ -1,6 +1,7 @@
 import { ChatGroq } from '@langchain/groq';
-import { ChatPromptTemplate } from '@langchain/core/prompts';
+import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 import type { ILLMProvider } from './llm.interface.js';
+import type { LLMMessage } from '../../services/context.service.js';
 import { LLMServiceError } from '../../shared/errors/custom-errors.js';
 
 const FAQ_KNOWLEDGE = `You are a helpful customer support agent for QuickShop E-commerce.
@@ -32,9 +33,10 @@ export class GroqProvider implements ILLMProvider {
       temperature: 0.7,
     });
 
-    // Create prompt template with system message and user input
+    // Create prompt template with system message, conversation history, and user input
     const prompt = ChatPromptTemplate.fromMessages([
       ['system', FAQ_KNOWLEDGE],
+      new MessagesPlaceholder('chat_history'),
       ['human', '{input}'],
     ]);
 
@@ -42,9 +44,18 @@ export class GroqProvider implements ILLMProvider {
     this.chain = prompt.pipe(model);
   }
 
-  async generateReply(message: string): Promise<string> {
+  async generateReply(message: string, conversationHistory: LLMMessage[] = []): Promise<string> {
     try {
-      const response = await this.chain.invoke({ input: message });
+      // Format history for LangChain (convert to HumanMessage/AIMessage format)
+      const formattedHistory = conversationHistory.map(msg => [
+        msg.role === 'user' ? 'human' : 'ai',
+        msg.content
+      ]);
+
+      const response = await this.chain.invoke({ 
+        input: message,
+        chat_history: formattedHistory
+      });
 
       const reply = response?.content;
 

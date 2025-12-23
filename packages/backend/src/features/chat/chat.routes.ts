@@ -4,19 +4,26 @@ import { ChatController } from './chat.controller.js';
 import type { ILLMProvider } from '../../integrations/llm/llm.interface.js';
 import type { IMessageRepository } from '../../repositories/message.repository.js';
 import type { IConversationRepository } from '../../repositories/conversation.repository.js';
+import type { IContextService } from '../../services/context.service.js';
 import type { ChatRequest } from './chat.types.js';
 import { ValidationError } from '../../shared/errors/custom-errors.js';
 
 /**
- * Create chat router with LLM provider, message repository, and conversation repository dependencies
+ * Create chat router with dependencies
  */
 export function createChatRouter(
   llmProvider: ILLMProvider,
   messageRepository: IMessageRepository,
-  conversationRepository: IConversationRepository
+  conversationRepository: IConversationRepository,
+  contextService: IContextService
 ): Router {
   const router = Router();
-  const controller = new ChatController(llmProvider, messageRepository, conversationRepository);
+  const controller = new ChatController(
+    llmProvider, 
+    messageRepository, 
+    conversationRepository,
+    contextService
+  );
 
   router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {

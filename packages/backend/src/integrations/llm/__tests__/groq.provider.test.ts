@@ -51,7 +51,10 @@ describe('GroqProvider', () => {
 
       await provider.generateReply('Hello');
 
-      expect(mockInvoke).toHaveBeenCalledWith({ input: 'Hello' });
+      expect(mockInvoke).toHaveBeenCalledWith({ 
+        input: 'Hello',
+        chat_history: []
+      });
     });
 
     it('should include FAQ knowledge in system prompt', async () => {
@@ -126,6 +129,97 @@ describe('GroqProvider', () => {
       mockInvoke.mockResolvedValue({ content: '' });
 
       await expect(provider.generateReply('Hello')).rejects.toThrow(LLMServiceError);
+    });
+  });
+
+  describe('generateReply with Context', () => {
+    it('should include conversation history in LLM call', async () => {
+      const history = [
+        { role: 'user' as const, content: 'What is your return policy?' },
+        { role: 'assistant' as const, content: 'We offer 30-day returns.' },
+      ];
+
+      mockInvoke.mockResolvedValue({ content: 'Anything else?' });
+
+      await provider.generateReply('Do you ship to Canada?', history);
+
+      expect(mockInvoke).toHaveBeenCalledWith({ 
+        input: 'Do you ship to Canada?',
+        chat_history: [
+          ['human', 'What is your return policy?'],
+          ['ai', 'We offer 30-day returns.']
+        ]
+      });
+    });
+
+    it('should work without conversation history (empty array)', async () => {
+      mockInvoke.mockResolvedValue({ content: 'Hello!' });
+
+      await provider.generateReply('Hi', []);
+
+      expect(mockInvoke).toHaveBeenCalledWith({ 
+        input: 'Hi',
+        chat_history: [] 
+      });
+    });
+
+    it('should work when history is undefined (backwards compatibility)', async () => {
+      mockInvoke.mockResolvedValue({ content: 'Hello!' });
+
+      await provider.generateReply('Hi');
+
+      expect(mockInvoke).toHaveBeenCalledWith({ 
+        input: 'Hi',
+        chat_history: [] 
+      });
+    });
+
+    it('should preserve message roles in history', async () => {
+      const history = [
+        { role: 'user' as const, content: 'First question' },
+        { role: 'assistant' as const, content: 'First answer' },
+        { role: 'user' as const, content: 'Second question' },
+        { role: 'assistant' as const, content: 'Second answer' },
+      ];
+
+      mockInvoke.mockResolvedValue({ content: 'Response' });
+
+      await provider.generateReply('Third question', history);
+
+      const callArgs = mockInvoke.mock.calls[0]?.[0];
+      expect((callArgs as any).chat_history).toEqual([
+        ['human', 'First question'],
+        ['ai', 'First answer'],
+        ['human', 'Second question'],
+        ['ai', 'Second answer']
+      ]);
+    });
+
+    it('should handle context with multiple exchanges', async () => {
+      const history = [
+        { role: 'user' as const, content: 'Q1' },
+        { role: 'assistant' as const, content: 'A1' },
+        { role: 'user' as const, content: 'Q2' },
+        { role: 'assistant' as const, content: 'A2' },
+        { role: 'user' as const, content: 'Q3' },
+        { role: 'assistant' as const, content: 'A3' },
+      ];
+
+      mockInvoke.mockResolvedValue({ content: 'Response' });
+
+      await provider.generateReply('Q4', history);
+
+      expect(mockInvoke).toHaveBeenCalledWith({ 
+        input: 'Q4',
+        chat_history: [
+          ['human', 'Q1'],
+          ['ai', 'A1'],
+          ['human', 'Q2'],
+          ['ai', 'A2'],
+          ['human', 'Q3'],
+          ['ai', 'A3']
+        ]
+      });
     });
   });
 });

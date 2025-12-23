@@ -5,12 +5,14 @@ import { errorHandler } from './shared/middleware/error-handler.js';
 import type { ILLMProvider } from './integrations/llm/llm.interface.js';
 import type { IMessageRepository } from './repositories/message.repository.js';
 import type { IConversationRepository } from './repositories/conversation.repository.js';
+import type { IContextService } from './services/context.service.js';
 import { prisma } from './config/database.js';
 
 export interface AppDependencies {
   llmProvider: ILLMProvider;
   messageRepository: IMessageRepository;
   conversationRepository: IConversationRepository;
+  contextService: IContextService;
 }
 
 /**
@@ -39,7 +41,8 @@ export function createApp(dependencies: AppDependencies): express.Application {
   app.use('/api/chat', createChatRouter(
     dependencies.llmProvider,
     dependencies.messageRepository,
-    dependencies.conversationRepository
+    dependencies.conversationRepository,
+    dependencies.contextService
   ));
 
   // Error handling (must be last)

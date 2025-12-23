@@ -4,12 +4,14 @@ import { ValidationError, LLMServiceError } from '../../../shared/errors/custom-
 import { createMockLLMProvider } from '../../../../tests/helpers/mock-llm.js';
 import type { IMessageRepository } from '../../../repositories/message.repository.js';
 import type { IConversationRepository } from '../../../repositories/conversation.repository.js';
+import type { IContextService } from '../../../services/context.service.js';
 
 // Mock message repository helper
 function createMockMessageRepository(): jest.Mocked<IMessageRepository> {
   return {
     create: jest.fn<any>(),
     count: jest.fn<any>(),
+    getRecentMessages: jest.fn<any>(),
   };
 }
 
@@ -21,17 +23,33 @@ function createMockConversationRepository(): jest.Mocked<IConversationRepository
   };
 }
 
+// Mock context service helper
+function createMockContextService(): jest.Mocked<IContextService> {
+  return {
+    formatForLLM: jest.fn<any>(),
+    limitContext: jest.fn<any>(),
+  };
+}
+
 describe('ChatController', () => {
   let controller: ChatController;
   let mockLLMProvider: ReturnType<typeof createMockLLMProvider>;
   let mockMessageRepo: jest.Mocked<IMessageRepository>;
   let mockConversationRepo: jest.Mocked<IConversationRepository>;
+  let mockContextService: jest.Mocked<IContextService>;
 
   beforeEach(() => {
     mockLLMProvider = createMockLLMProvider();
     mockMessageRepo = createMockMessageRepository();
     mockConversationRepo = createMockConversationRepository();
-    controller = new ChatController(mockLLMProvider, mockMessageRepo, mockConversationRepo);
+    mockContextService = createMockContextService();
+    
+    controller = new ChatController(
+      mockLLMProvider, 
+      mockMessageRepo, 
+      mockConversationRepo,
+      mockContextService
+    );
     
     // Default successful responses
     mockMessageRepo.create.mockResolvedValue({
@@ -42,12 +60,17 @@ describe('ChatController', () => {
       timestamp: new Date(),
     });
 
+    mockMessageRepo.getRecentMessages.mockResolvedValue([]);
+
     mockConversationRepo.create.mockResolvedValue({
       id: 'conv-123',
       sessionId: 'session-abc',
       createdAt: new Date(),
       updatedAt: new Date(),
     });
+
+    mockContextService.formatForLLM.mockReturnValue([]);
+    mockContextService.limitContext.mockImplementation((messages) => messages);
   });
 
   describe('handleMessage', () => {
@@ -70,7 +93,7 @@ describe('ChatController', () => {
 
       await controller.handleMessage('Hello');
 
-      expect(mockLLMProvider.generateReply).toHaveBeenCalledWith('Hello');
+      expect(mockLLMProvider.generateReply).toHaveBeenCalledWith('Hello', expect.any(Array));
     });
 
     it('should call LLM provider with trimmed message', async () => {
@@ -78,7 +101,7 @@ describe('ChatController', () => {
 
       await controller.handleMessage('  Hello  ');
 
-      expect(mockLLMProvider.generateReply).toHaveBeenCalledWith('Hello');
+      expect(mockLLMProvider.generateReply).toHaveBeenCalledWith('Hello', expect.any(Array));
     });
 
     it('should return reply from LLM', async () => {
