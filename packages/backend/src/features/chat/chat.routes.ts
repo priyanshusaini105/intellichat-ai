@@ -6,7 +6,8 @@ import type { IMessageRepository } from '../../repositories/message.repository.j
 import type { IConversationRepository } from '../../repositories/conversation.repository.js';
 import type { IContextService } from '../../services/context.service.js';
 import type { ChatRequest } from './chat.types.js';
-import { ValidationError } from '../../shared/errors/custom-errors.js';
+import { validateRequest } from '../../shared/middleware/validation.js';
+import { ChatMessageSchema } from './chat.validation.js';
 
 /**
  * Create chat router with dependencies
@@ -25,21 +26,21 @@ export function createChatRouter(
     contextService
   );
 
-  router.post('/', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { message, sessionId } = req.body as ChatRequest;
-
-      // Validate message type
-      if (typeof message !== 'string') {
-        throw new ValidationError('Message must be a string');
+  // Apply validation middleware to POST endpoint
+  router.post(
+    '/',
+    validateRequest(ChatMessageSchema),
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { message, sessionId } = req.body as ChatRequest;
+        const response = await controller.handleMessage(message, sessionId);
+        res.json(response);
+      } catch (error) {
+        next(error);
       }
-
-      const response = await controller.handleMessage(message, sessionId);
-      res.json(response);
-    } catch (error) {
-      next(error);
     }
-  });
+  );
 
   return router;
 }
+

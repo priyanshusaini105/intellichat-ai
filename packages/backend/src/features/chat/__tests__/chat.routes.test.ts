@@ -122,7 +122,7 @@ describe('Chat Routes', () => {
       expect(response.body.error).toContain('empty');
     });
 
-    it('should return 500 when LLM service fails', async () => {
+    it('should return 503 when LLM service fails', async () => {
       (mockLLMProvider.generateReply as any).mockRejectedValue(
         new LLMServiceError('LLM failed')
       );
@@ -130,10 +130,10 @@ describe('Chat Routes', () => {
       const response = await request(app)
         .post('/api/chat')
         .send({ message: 'Hello' })
-        .expect(500);
+        .expect(503);
 
       expect(response.body).toHaveProperty('error');
-      expect(response.body.error).toBe('Failed to process request');
+      expect(response.body.error).toBe('AI service is temporarily unavailable. Please try again later.');
     });
 
     it('should have correct response structure', async () => {
