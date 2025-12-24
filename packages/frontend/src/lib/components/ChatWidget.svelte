@@ -407,20 +407,21 @@
 
 <!-- Floating button - always visible -->
 <button
-	on:click={() => (isOpen = !isOpen)}
-	class="fixed right-6 bottom-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#1a73e8] text-white shadow-xl shadow-blue-200 transition hover:scale-105"
+	onclick={() => (isOpen = !isOpen)}
+	class="active-press hover-lift fixed right-6 bottom-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#1a73e8] text-white shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl"
+	class:animate-pulse-shadow={!isOpen}
 	aria-label={isOpen ? 'Close support widget' : 'Open support widget'}
 >
 	{#if isOpen}
 		<X class="animate-rotate-in h-6 w-6" />
 	{:else}
-		<MessageSquare class="h-6 w-6" />
+		<MessageSquare class="h-6 w-6 transition-transform duration-300" />
 	{/if}
 </button>
 
 <!-- Widget popup -->
 {#if isOpen}
-	<div class="animate-pop fixed right-6 bottom-24 z-20 w-full max-w-[430px]">
+	<div class="animate-widget-open fixed right-6 bottom-24 z-20 w-full max-w-[430px]">
 		<div
 			class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl ring-1 shadow-blue-100/40 ring-slate-100"
 		>
@@ -432,19 +433,19 @@
 							on:click={() =>
 								(view =
 									view === 'history' ? 'chat' : view === 'all-history' ? 'welcome' : 'welcome')}
-							class="rounded-full p-2 text-white transition hover:bg-white/10"
+							class="active-press rounded-full p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
 							aria-label="Go back"
 						>
 							<ArrowLeft class="h-5 w-5" />
 						</button>
 					{/if}
-					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20">
+					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 transition-all duration-300 hover:bg-white/30">
 						{#if view === 'welcome'}
-							<Sparkles class="h-5 w-5" />
+							<Sparkles class="animate-fade-scale-in h-5 w-5" />
 						{:else if view === 'history' || view === 'all-history'}
-							<Clock class="h-5 w-5" />
+							<Clock class="animate-fade-scale-in h-5 w-5" />
 						{:else}
-							<MessageCircle class="h-5 w-5" />
+							<MessageCircle class="animate-fade-scale-in h-5 w-5" />
 						{/if}
 					</div>
 					<div>
@@ -456,7 +457,7 @@
 					{#if view === 'chat' && messages.length > 0}
 						<button
 							on:click={() => (view = 'history')}
-							class="rounded-full p-2 text-white transition hover:bg-white/10"
+							class="active-press rounded-full p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
 							aria-label="View history"
 							title="View conversation info"
 						>
@@ -464,7 +465,7 @@
 						</button>
 						<button
 							on:click={handleNewConversation}
-							class="rounded-full p-2 text-white transition hover:bg-white/10"
+							class="active-press rounded-full p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
 							aria-label="New conversation"
 							title="Start new conversation"
 						>
@@ -480,7 +481,7 @@
 					{/if}
 					<button
 						on:click={() => (isOpen = false)}
-						class="rounded-full p-2 text-white transition hover:bg-white/10"
+						class="active-press rounded-full p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
 						aria-label="Close widget"
 					>
 						<X class="h-5 w-5" />
@@ -492,9 +493,9 @@
 			<div class="bg-slate-50/60 p-6">
 				{#if view === 'welcome'}
 					<!-- Welcome View -->
-					<div class="space-y-6">
+					<div class="animate-fade-scale-in space-y-6">
 						<div
-							class="rounded-3xl bg-gradient-to-br from-[#1a73e8] via-[#1d82ff] to-[#0f5ad3] p-6 text-white shadow-lg"
+							class="hover-lift rounded-3xl bg-gradient-to-br from-[#1a73e8] via-[#1d82ff] to-[#0f5ad3] p-6 text-white shadow-lg transition-all duration-300"
 						>
 							<div class="flex items-start justify-between">
 								<div class="space-y-2">
@@ -513,20 +514,20 @@
 						</div>
 
 						<div class="space-y-3">
-							<div class="rounded-2xl border border-slate-100 bg-white/80 p-4 shadow-sm">
+							<div class="hover-lift animate-fade-up-stagger rounded-2xl border border-slate-100 bg-white/80 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md" style="animation-delay: 100ms">
 								<p class="text-sm font-semibold text-slate-800">Start a conversation</p>
 								<p class="text-xs text-slate-500">We usually respond within 10 minutes</p>
 								<button
 									on:click={() => (view = 'chat')}
-									class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a73e8] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-[#155ec2]"
+									class="active-press mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a73e8] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition-all duration-300 hover:bg-[#155ec2] hover:shadow-xl hover:scale-[1.02]"
 								>
 									<span>Chat with us</span>
-									<Zap class="h-4 w-4" />
+									<Zap class="h-4 w-4 transition-transform duration-300 group-hover:rotate-12" />
 								</button>
 							</div>
 
 							<!-- Always show History button -->
-							<div class="rounded-2xl border border-slate-100 bg-white/80 p-4 shadow-sm">
+							<div class="hover-lift animate-fade-up-stagger rounded-2xl border border-slate-100 bg-white/80 p-4 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md" style="animation-delay: 200ms">
 								<div class="mb-3 flex items-center justify-between">
 									<div>
 										<p class="text-sm font-semibold text-slate-800">Conversation History</p>
@@ -544,23 +545,24 @@
 								</div>
 								<button
 									on:click={() => (view = 'all-history')}
-									class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+									class="active-press inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all duration-300 hover:bg-slate-50 hover:border-slate-400 hover:scale-[1.02]"
 								>
 									<span>{allConversations.length > 0 ? 'View All History' : 'View History'}</span>
-									<ArrowLeft class="h-4 w-4 rotate-180" />
+									<ArrowLeft class="h-4 w-4 rotate-180 transition-transform duration-300 group-hover:translate-x-1" />
 								</button>
 							</div>
 						</div>
 
 						<div class="space-y-2">
-							<p class="text-xs font-semibold tracking-wide text-slate-500 uppercase">
+							<p class="animate-fade-up-stagger text-xs font-semibold tracking-wide text-slate-500 uppercase" style="animation-delay: 300ms">
 								Ask quick questions
 							</p>
 							<div class="flex flex-wrap gap-2">
-								{#each quickQuestions as question (question)}
+								{#each quickQuestions as question, i (question)}
 									<button
 										on:click={() => handleQuickQuestion(question)}
-										class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-blue-200 hover:bg-blue-50"
+										class="active-press animate-fade-up-stagger rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition-all duration-300 hover:border-blue-300 hover:bg-blue-50 hover:shadow-sm hover:scale-105"
+										style="animation-delay: {350 + i * 50}ms"
 									>
 										{question}
 									</button>
@@ -570,13 +572,13 @@
 					</div>
 				{:else if view === 'chat'}
 					<!-- Chat View -->
-					<div class="flex h-[420px] flex-col">
+					<div class="animate-fade-scale-in flex h-[420px] flex-col">
 						<div
 							class="thin-scrollbar flex-1 space-y-4 overflow-y-auto pr-1"
 							bind:this={messageListRef}
 						>
 							{#if error}
-								<div class="animate-fade-up mb-3 rounded-lg border border-red-200 bg-red-50 p-3">
+								<div class="animate-message-pop mb-3 rounded-lg border border-red-200 bg-red-50 p-3">
 									<div class="flex items-start gap-2">
 										<svg
 											class="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600"
@@ -595,7 +597,7 @@
 											<p class="text-sm text-red-800">{error}</p>
 											<button
 												on:click={() => (error = null)}
-												class="mt-1 text-xs text-red-600 underline hover:text-red-700"
+												class="active-press mt-1 text-xs text-red-600 underline transition-all duration-200 hover:text-red-700"
 											>
 												Dismiss
 											</button>
@@ -604,14 +606,15 @@
 								</div>
 							{/if}
 
-							{#each messages as message (message.id)}
+							{#each messages as message, i (message.id)}
 								<div class={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
 									<div
 										class={`${
 											message.sender === 'user'
 												? 'bg-[#1a73e8] text-white'
 												: 'bg-slate-100 text-slate-800'
-										} animate-fade-up max-w-[80%] rounded-2xl px-4 py-3 shadow-sm`}
+										} animate-message-pop max-w-[80%] rounded-2xl px-4 py-3 shadow-sm transition-all duration-300 hover:shadow-md`}
+										style="animation-delay: {i * 50}ms"
 									>
 										<p class="text-sm leading-relaxed">{message.text}</p>
 										<p
@@ -633,16 +636,13 @@
 										<div class="flex items-center gap-2">
 											<div class="flex gap-1">
 												<div
-													class="h-2 w-2 animate-bounce rounded-full bg-slate-400"
-													style="animation-delay: 0ms"
+													class="animate-bounce-dot-1 h-2 w-2 rounded-full bg-slate-400"
 												></div>
 												<div
-													class="h-2 w-2 animate-bounce rounded-full bg-slate-400"
-													style="animation-delay: 150ms"
+													class="animate-bounce-dot-2 h-2 w-2 rounded-full bg-slate-400"
 												></div>
 												<div
-													class="h-2 w-2 animate-bounce rounded-full bg-slate-400"
-													style="animation-delay: 300ms"
+													class="animate-bounce-dot-3 h-2 w-2 rounded-full bg-slate-400"
 												></div>
 											</div>
 											<p class="text-xs text-slate-500">Agent is typing...</p>
@@ -652,24 +652,25 @@
 							{/if}
 						</div>
 
-						<div class="mt-4 rounded-2xl border border-slate-200 bg-white p-3 shadow-inner">
+						<div class="mt-4 rounded-2xl border border-slate-200 bg-white p-3 shadow-inner transition-all duration-300 focus-within:border-blue-300 focus-within:shadow-md">
 							<div class="flex items-center gap-2">
 								<textarea
 									bind:value={input}
 									on:keydown={handleKeyDown}
+									on:focus={(e) => e.currentTarget.parentElement?.parentElement?.classList.add('animate-input-focus')}
 									placeholder="Type your message..."
 									rows="1"
-									class="min-h-[44px] flex-1 resize-none bg-transparent text-sm text-slate-800 outline-none"
+									class="min-h-[44px] flex-1 resize-none bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 transition-all duration-200"
 								></textarea>
 								<button
 									on:click={handleSend}
-									class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#1a73e8] text-white shadow-md transition hover:bg-[#155ec2] disabled:cursor-not-allowed disabled:bg-slate-300 disabled:opacity-50"
+									class="active-press inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#1a73e8] text-white shadow-md transition-all duration-300 hover:bg-[#155ec2] hover:shadow-lg hover:scale-110 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:opacity-50 disabled:hover:scale-100"
 									disabled={!input.trim() || isLoading}
 									aria-label="Send message"
 								>
 									{#if isLoading}
 										<svg
-											class="h-5 w-5 animate-spin"
+											class="animate-spin-smooth h-5 w-5"
 											xmlns="http://www.w3.org/2000/svg"
 											fill="none"
 											viewBox="0 0 24 24"
@@ -689,7 +690,7 @@
 											></path>
 										</svg>
 									{:else}
-										<Send class="h-5 w-5" />
+										<Send class="h-5 w-5 transition-transform duration-200 group-hover:translate-x-0.5" />
 									{/if}
 								</button>
 							</div>
@@ -697,13 +698,13 @@
 					</div>
 				{:else if view === 'details'}
 					<!-- Details Form -->
-					<form class="space-y-4" on:submit={handleDetailSubmit}>
+					<form class="animate-fade-scale-in space-y-4" on:submit={handleDetailSubmit}>
 						<div class="space-y-3">
 							<p class="text-sm text-slate-600">
 								Please share your details so we can assist you better:
 							</p>
 							{#if pendingMessage}
-								<div class="rounded-2xl bg-slate-100 px-4 py-3 text-sm text-slate-700">
+								<div class="animate-message-pop rounded-2xl bg-slate-100 px-4 py-3 text-sm text-slate-700">
 									<p class="text-xs tracking-wide text-slate-500 uppercase">Pending message</p>
 									<p class="mt-1">"{pendingMessage}"</p>
 								</div>
@@ -713,21 +714,21 @@
 								placeholder="Your Name"
 								bind:value={details.name}
 								required
-								class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-blue-100"
+								class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition-all duration-300 focus:border-[#1a73e8] focus:ring-2 focus:ring-blue-100 focus:scale-[1.01]"
 							/>
 							<input
 								type="email"
 								placeholder="Your Email"
 								bind:value={details.email}
 								required
-								class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-blue-100"
+								class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition-all duration-300 focus:border-[#1a73e8] focus:ring-2 focus:ring-blue-100 focus:scale-[1.01]"
 							/>
 							<input
 								type="tel"
 								placeholder="Your Phone Number"
 								bind:value={details.phone}
 								required
-								class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-blue-100"
+								class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition-all duration-300 focus:border-[#1a73e8] focus:ring-2 focus:ring-blue-100 focus:scale-[1.01]"
 							/>
 						</div>
 
@@ -741,26 +742,26 @@
 							<button
 								type="button"
 								on:click={handleSkipDetails}
-								class="text-sm font-semibold text-slate-600 underline underline-offset-4 hover:text-slate-900"
+								class="active-press text-sm font-semibold text-slate-600 underline underline-offset-4 transition-all duration-200 hover:text-slate-900 hover:scale-105"
 							>
 								Skip for now
 							</button>
 							<button
 								type="submit"
-								class="inline-flex items-center gap-2 rounded-xl bg-[#1a73e8] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-[#155ec2]"
+								class="active-press inline-flex items-center gap-2 rounded-xl bg-[#1a73e8] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition-all duration-300 hover:bg-[#155ec2] hover:shadow-xl hover:scale-105"
 							>
 								<span>Continue</span>
-								<Send class="h-4 w-4" />
+								<Send class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
 							</button>
 						</div>
 					</form>
 				{:else if view === 'history'}
 					<!-- History View -->
-					<div class="space-y-4">
+					<div class="animate-fade-scale-in space-y-4">
 						{#if conversationMetadata}
 							<!-- Conversation Info Card -->
 							<div
-								class="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-5"
+								class="hover-lift animate-fade-up-stagger rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-5 transition-all duration-300 hover:shadow-md"
 							>
 								<div class="flex items-start gap-3">
 									<div
@@ -779,9 +780,9 @@
 
 							<!-- Stats Grid -->
 							<div class="grid grid-cols-2 gap-3">
-								<div class="rounded-xl border border-slate-200 bg-white p-4">
+								<div class="hover-lift animate-fade-up-stagger rounded-xl border border-slate-200 bg-white p-4 transition-all duration-300 hover:shadow-md" style="animation-delay: 100ms">
 									<div class="flex items-center gap-2">
-										<div class="rounded-lg bg-blue-100 p-2">
+										<div class="rounded-lg bg-blue-100 p-2 transition-transform duration-300 group-hover:scale-110">
 											<MessageCircle class="h-4 w-4 text-[#1a73e8]" />
 										</div>
 										<div>
@@ -793,9 +794,9 @@
 									</div>
 								</div>
 
-								<div class="rounded-xl border border-slate-200 bg-white p-4">
+								<div class="hover-lift animate-fade-up-stagger rounded-xl border border-slate-200 bg-white p-4 transition-all duration-300 hover:shadow-md" style="animation-delay: 150ms">
 									<div class="flex items-center gap-2">
-										<div class="rounded-lg bg-green-100 p-2">
+										<div class="rounded-lg bg-green-100 p-2 transition-transform duration-300 group-hover:scale-110">
 											<Clock class="h-4 w-4 text-green-600" />
 										</div>
 										<div>
@@ -854,16 +855,16 @@
 							</div>
 
 							<!-- Actions -->
-							<div class="flex gap-2">
+							<div class="animate-fade-up-stagger flex gap-2" style="animation-delay: 300ms">
 								<button
 									on:click={() => (view = 'chat')}
-									class="flex-1 rounded-xl bg-[#1a73e8] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-[#155ec2]"
+									class="active-press flex-1 rounded-xl bg-[#1a73e8] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition-all duration-300 hover:bg-[#155ec2] hover:shadow-xl hover:scale-105"
 								>
 									Continue Chat
 								</button>
 								<button
 									on:click={handleNewConversation}
-									class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+									class="active-press rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition-all duration-300 hover:bg-slate-50 hover:border-slate-300 hover:scale-105"
 								>
 									New
 								</button>
@@ -891,7 +892,7 @@
 					</div>
 				{:else if view === 'all-history'}
 					<!-- All Conversations History View -->
-					<div class="space-y-4">
+					<div class="animate-fade-scale-in space-y-4">
 						<div class="flex items-center justify-between">
 							<div>
 								<h3 class="text-lg font-semibold text-slate-900">All Conversations</h3>
@@ -901,14 +902,15 @@
 
 						{#if allConversations.length > 0}
 							<div class="thin-scrollbar max-h-[420px] space-y-2 overflow-y-auto">
-								{#each allConversations as conversation (conversation.sessionId)}
+								{#each allConversations as conversation, i (conversation.sessionId)}
 									<div
-										class="rounded-xl border border-slate-200 bg-white p-4 transition hover:border-blue-200 hover:shadow-sm"
+										class="hover-lift animate-fade-up-stagger rounded-xl border border-slate-200 bg-white p-4 transition-all duration-300 hover:border-blue-200 hover:shadow-md"
+										style="animation-delay: {i * 50}ms"
 									>
 										<div class="flex items-start justify-between gap-3">
 											<button
 												on:click={() => handleLoadConversation(conversation.sessionId)}
-												class="flex-1 text-left"
+												class="flex-1 text-left transition-all duration-200 hover:scale-[1.01]"
 											>
 												<div class="mb-1 flex items-center gap-2">
 													<MessageSquare class="h-4 w-4 text-[#1a73e8]" />
@@ -932,7 +934,7 @@
 											</button>
 											<button
 												on:click={() => handleDeleteConversation(conversation.sessionId)}
-												class="rounded-lg p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600"
+												class="active-press rounded-lg p-2 text-slate-400 transition-all duration-200 hover:bg-red-50 hover:text-red-600 hover:scale-110"
 												aria-label="Delete conversation"
 											>
 												<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -995,51 +997,9 @@
 {/if}
 
 <style>
-	:global(.animate-pop) {
-		animation: pop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-	}
-
-	@keyframes pop {
-		from {
-			opacity: 0;
-			transform: scale(0.95) translateY(10px);
-		}
-		to {
-			opacity: 1;
-			transform: scale(1) translateY(0);
-		}
-	}
-
-	:global(.animate-fade-up) {
-		animation: fade-up 0.3s ease-out;
-	}
-
-	@keyframes fade-up {
-		from {
-			opacity: 0;
-			transform: translateY(8px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
-	:global(.animate-rotate-in) {
-		animation: rotate-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-	}
-
-	@keyframes rotate-in {
-		from {
-			opacity: 0;
-			transform: rotate(-180deg) scale(0.8);
-		}
-		to {
-			opacity: 1;
-			transform: rotate(0deg) scale(1);
-		}
-	}
-
+	/* Component-specific styles - global animations are in app.css */
+	
+	/* Enhanced scrollbar for message list */
 	:global(.thin-scrollbar) {
 		scrollbar-width: thin;
 		scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
@@ -1056,9 +1016,21 @@
 	:global(.thin-scrollbar::-webkit-scrollbar-thumb) {
 		background: rgba(100, 116, 139, 0.3);
 		border-radius: 0.25rem;
+		transition: background 0.2s ease;
 	}
 
 	:global(.thin-scrollbar::-webkit-scrollbar-thumb:hover) {
 		background: rgba(100, 116, 139, 0.5);
+	}
+	
+	/* Auto-growing textarea */
+	textarea {
+		field-sizing: content;
+		max-height: 120px;
+	}
+	
+	/* Smooth transitions for all interactive elements */
+	button {
+		transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 	}
 </style>

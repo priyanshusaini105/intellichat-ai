@@ -14,6 +14,7 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+/* ===== SCROLLBAR STYLES ===== */
 .thin-scrollbar {
 	scrollbar-width: thin;
 	scrollbar-color: rgba(100, 116, 139, 0.3) transparent;
@@ -30,12 +31,137 @@ body {
 .thin-scrollbar::-webkit-scrollbar-thumb {
 	background: rgba(100, 116, 139, 0.3);
 	border-radius: 0.25rem;
+	transition: background 0.2s ease;
 }
 
 .thin-scrollbar::-webkit-scrollbar-thumb:hover {
 	background: rgba(100, 116, 139, 0.5);
 }
 
+/* ===== WIDGET ANIMATIONS ===== */
+
+/* Widget open/close with smooth scale and fade */
+@keyframes widget-open {
+	0% {
+		opacity: 0;
+		transform: scale(0.85) translateY(20px);
+	}
+	60% {
+		transform: scale(1.02) translateY(-2px);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+@keyframes widget-close {
+	0% {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(0.9) translateY(10px);
+	}
+}
+
+.animate-widget-open {
+	animation: widget-open 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-widget-close {
+	animation: widget-close 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* ===== VIEW TRANSITIONS ===== */
+
+/* Slide in from right */
+@keyframes slide-in-right {
+	from {
+		opacity: 0;
+		transform: translateX(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+/* Slide in from left */
+@keyframes slide-in-left {
+	from {
+		opacity: 0;
+		transform: translateX(-30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+/* Fade and scale */
+@keyframes fade-scale-in {
+	from {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.animate-slide-in-right {
+	animation: slide-in-right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-slide-in-left {
+	animation: slide-in-left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-fade-scale-in {
+	animation: fade-scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== MESSAGE ANIMATIONS ===== */
+
+/* Message entrance with bounce */
+@keyframes message-pop {
+	0% {
+		opacity: 0;
+		transform: translateY(15px) scale(0.9);
+	}
+	50% {
+		transform: translateY(-3px) scale(1.01);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+.animate-message-pop {
+	animation: message-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Staggered message entrance */
+@keyframes fade-up-stagger {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.animate-fade-up-stagger {
+	animation: fade-up-stagger 0.35s ease-out;
+}
+
+/* Legacy fade-up for compatibility */
 @keyframes fade-up {
 	from {
 		opacity: 0;
@@ -51,6 +177,134 @@ body {
 	animation: fade-up 0.3s ease-out;
 }
 
+/* ===== BUTTON ANIMATIONS ===== */
+
+/* Floating button pulse */
+@keyframes pulse-shadow {
+	0%, 100% {
+		box-shadow: 0 10px 40px rgba(26, 115, 232, 0.3);
+	}
+	50% {
+		box-shadow: 0 15px 50px rgba(26, 115, 232, 0.5);
+	}
+}
+
+.animate-pulse-shadow {
+	animation: pulse-shadow 2s ease-in-out infinite;
+}
+
+/* Icon rotation */
+@keyframes rotate-in {
+	from {
+		opacity: 0;
+		transform: rotate(-180deg) scale(0.7);
+	}
+	to {
+		opacity: 1;
+		transform: rotate(0deg) scale(1);
+	}
+}
+
+.animate-rotate-in {
+	animation: rotate-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Button press effect */
+@keyframes button-press {
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(0.95);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+.animate-button-press {
+	animation: button-press 0.15s ease-in-out;
+}
+
+/* ===== LOADING ANIMATIONS ===== */
+
+/* Typing indicator dots */
+@keyframes bounce-dot {
+	0%, 60%, 100% {
+		transform: translateY(0);
+	}
+	30% {
+		transform: translateY(-8px);
+	}
+}
+
+.animate-bounce-dot-1 {
+	animation: bounce-dot 1.2s ease-in-out infinite;
+	animation-delay: 0s;
+}
+
+.animate-bounce-dot-2 {
+	animation: bounce-dot 1.2s ease-in-out infinite;
+	animation-delay: 0.2s;
+}
+
+.animate-bounce-dot-3 {
+	animation: bounce-dot 1.2s ease-in-out infinite;
+	animation-delay: 0.4s;
+}
+
+/* Spinner rotation */
+@keyframes spin-smooth {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.animate-spin-smooth {
+	animation: spin-smooth 1s linear infinite;
+}
+
+/* ===== INTERACTIVE ELEMENTS ===== */
+
+/* Input focus glow */
+@keyframes input-focus-glow {
+	from {
+		box-shadow: 0 0 0 0 rgba(26, 115, 232, 0.4);
+	}
+	to {
+		box-shadow: 0 0 0 4px rgba(26, 115, 232, 0);
+	}
+}
+
+.animate-input-focus {
+	animation: input-focus-glow 0.6s ease-out;
+}
+
+/* Shimmer effect for loading states */
+@keyframes shimmer {
+	0% {
+		background-position: -200% 0;
+	}
+	100% {
+		background-position: 200% 0;
+	}
+}
+
+.animate-shimmer {
+	background: linear-gradient(
+		90deg,
+		rgba(255, 255, 255, 0) 0%,
+		rgba(255, 255, 255, 0.6) 50%,
+		rgba(255, 255, 255, 0) 100%
+	);
+	background-size: 200% 100%;
+	animation: shimmer 2s ease-in-out infinite;
+}
+
+/* ===== LEGACY ANIMATION (Keep for compatibility) ===== */
 @keyframes pop {
 	from {
 		opacity: 0;
@@ -64,4 +318,29 @@ body {
 
 .animate-pop {
 	animation: pop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== UTILITY CLASSES ===== */
+
+/* Smooth transitions for interactive elements */
+.transition-smooth {
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-bounce {
+	transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Hover lift effect */
+.hover-lift {
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+	transform: translateY(-2px);
+}
+
+/* Active press effect */
+.active-press:active {
+	transform: scale(0.98);
 }
