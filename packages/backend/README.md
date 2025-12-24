@@ -200,6 +200,129 @@ const data = await response.json();
 console.log(data.reply);
 ```
 
+## Deployment
+
+### Production Build
+
+```bash
+# Build the application
+pnpm build
+
+# This will:
+# 1. Generate Prisma Client
+# 2. Compile TypeScript to JavaScript in dist/
+```
+
+### Environment Variables for Production
+
+Required environment variables:
+
+```
+# Database
+DATABASE_URL=postgresql://user:password@host:5432/database
+
+# LLM Provider
+GROQ_API_KEY=your-groq-api-key
+
+# Redis (Optional - for caching)
+REDIS_URL=redis://user:password@host:6379
+
+# Server
+PORT=3001
+NODE_ENV=production
+CORS_ORIGIN=https://your-frontend-url.vercel.app
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=60000
+RATE_LIMIT_MAX_REQUESTS=20
+MAX_MESSAGE_LENGTH=2000
+```
+
+### Deploy to Railway
+
+1. **Connect Repository**
+   - Go to [Railway](https://railway.app)
+   - Click "New Project" → "Deploy from GitHub repo"
+   - Select your repository
+
+2. **Configure Service**
+   - Railway will auto-detect the `railway.toml` configuration
+   - Set Root Directory: `packages/backend`
+   - Add environment variables in Railway dashboard
+
+3. **Add PostgreSQL Database**
+   - In your Railway project, click "New" → "Database" → "PostgreSQL"
+   - Copy the `DATABASE_URL` to your service environment variables
+
+4. **Deploy**
+   - Railway will automatically:
+     - Install dependencies with pnpm
+     - Generate Prisma Client
+     - Build TypeScript
+     - Run migrations (`prisma migrate deploy`)
+     - Start the server
+
+### Deploy to Render
+
+1. **Create Web Service**
+   - Go to [Render](https://render.com)
+   - Click "New" → "Web Service"
+   - Connect your GitHub repository
+
+2. **Configure Build Settings**
+   - **Root Directory**: `packages/backend`
+   - **Build Command**: `pnpm install --frozen-lockfile && pnpm build`
+   - **Start Command**: `pnpm prisma:migrate:deploy && pnpm start`
+   - **Environment**: Node
+
+3. **Add PostgreSQL Database**
+   - In Render dashboard, click "New" → "PostgreSQL"
+   - Copy the Internal Database URL
+   - Add as `DATABASE_URL` environment variable to your web service
+
+4. **Environment Variables**
+   - Add all required environment variables in Render dashboard
+   - Set `NODE_ENV=production`
+
+5. **Deploy**
+   - Click "Create Web Service"
+   - Render will build and deploy automatically
+
+### Prisma Migrations in Production
+
+The deployment process automatically runs migrations:
+
+**Railway**: The `startCommand` in `railway.toml` runs `prisma migrate deploy`
+**Render**: The start command runs `pnpm prisma:migrate:deploy`
+
+This ensures:
+- Database schema is always up-to-date
+- No manual migration steps needed
+- Zero-downtime deployments (migrations run before app starts)
+
+### Health Check
+
+Both platforms can use the health endpoint:
+
+```
+GET /api/health
+```
+
+Response:
+```json
+{
+  "status": "ok",
+  "timestamp": 1703422800000
+}
+```
+
+### Monitoring
+
+After deployment, monitor:
+- **Logs**: Check Railway/Render logs for errors
+- **Database**: Use Prisma Studio or Railway/Render database dashboards
+- **Performance**: Monitor response times and error rates
+
 ## Development Workflow
 
 1. Write tests first (TDD)
