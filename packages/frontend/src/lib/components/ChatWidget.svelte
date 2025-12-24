@@ -430,7 +430,7 @@
 				<div class="flex items-center gap-2">
 					{#if view !== 'welcome'}
 						<button
-							on:click={() =>
+							onclick={() =>
 								(view =
 									view === 'history' ? 'chat' : view === 'all-history' ? 'welcome' : 'welcome')}
 							class="active-press rounded-full p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
@@ -456,7 +456,7 @@
 				<div class="flex items-center gap-1">
 					{#if view === 'chat' && messages.length > 0}
 						<button
-							on:click={() => (view = 'history')}
+							onclick={() => (view = 'history')}
 							class="active-press rounded-full p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
 							aria-label="View history"
 							title="View conversation info"
@@ -464,7 +464,7 @@
 							<Clock class="h-5 w-5" />
 						</button>
 						<button
-							on:click={handleNewConversation}
+							onclick={handleNewConversation}
 							class="active-press rounded-full p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
 							aria-label="New conversation"
 							title="Start new conversation"
@@ -480,7 +480,7 @@
 						</button>
 					{/if}
 					<button
-						on:click={() => (isOpen = false)}
+						onclick={() => (isOpen = false)}
 						class="active-press rounded-full p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
 						aria-label="Close widget"
 					>
@@ -518,7 +518,7 @@
 								<p class="text-sm font-semibold text-slate-800">Start a conversation</p>
 								<p class="text-xs text-slate-500">We usually respond within 10 minutes</p>
 								<button
-									on:click={() => (view = 'chat')}
+									onclick={() => (view = 'chat')}
 									class="active-press mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1a73e8] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition-all duration-300 hover:bg-[#155ec2] hover:shadow-xl hover:scale-[1.02]"
 								>
 									<span>Chat with us</span>
@@ -544,7 +544,7 @@
 									<Clock class="h-5 w-5 text-slate-400" />
 								</div>
 								<button
-									on:click={() => (view = 'all-history')}
+									onclick={() => (view = 'all-history')}
 									class="active-press inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-all duration-300 hover:bg-slate-50 hover:border-slate-400 hover:scale-[1.02]"
 								>
 									<span>{allConversations.length > 0 ? 'View All History' : 'View History'}</span>
@@ -560,7 +560,7 @@
 							<div class="flex flex-wrap gap-2">
 								{#each quickQuestions as question, i (question)}
 									<button
-										on:click={() => handleQuickQuestion(question)}
+										onclick={() => handleQuickQuestion(question)}
 										class="active-press animate-fade-up-stagger rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition-all duration-300 hover:border-blue-300 hover:bg-blue-50 hover:shadow-sm hover:scale-105"
 										style="animation-delay: {350 + i * 50}ms"
 									>
@@ -596,7 +596,7 @@
 										<div class="flex-1">
 											<p class="text-sm text-red-800">{error}</p>
 											<button
-												on:click={() => (error = null)}
+												onclick={() => (error = null)}
 												class="active-press mt-1 text-xs text-red-600 underline transition-all duration-200 hover:text-red-700"
 											>
 												Dismiss
@@ -656,14 +656,14 @@
 							<div class="flex items-center gap-2">
 								<textarea
 									bind:value={input}
-									on:keydown={handleKeyDown}
-									on:focus={(e) => e.currentTarget.parentElement?.parentElement?.classList.add('animate-input-focus')}
+									onkeydown={handleKeyDown}
+									onfocus={(e) => e.currentTarget.parentElement?.parentElement?.classList.add('animate-input-focus')}
 									placeholder="Type your message..."
 									rows="1"
 									class="min-h-[44px] flex-1 resize-none bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 transition-all duration-200"
 								></textarea>
 								<button
-									on:click={handleSend}
+									onclick={handleSend}
 									class="active-press inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#1a73e8] text-white shadow-md transition-all duration-300 hover:bg-[#155ec2] hover:shadow-lg hover:scale-110 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:opacity-50 disabled:hover:scale-100"
 									disabled={!input.trim() || isLoading}
 									aria-label="Send message"
@@ -698,7 +698,7 @@
 					</div>
 				{:else if view === 'details'}
 					<!-- Details Form -->
-					<form class="animate-fade-scale-in space-y-4" on:submit={handleDetailSubmit}>
+					<form class="animate-fade-scale-in space-y-4" onsubmit={handleDetailSubmit}>
 						<div class="space-y-3">
 							<p class="text-sm text-slate-600">
 								Please share your details so we can assist you better:
@@ -741,7 +741,7 @@
 						<div class="flex items-center justify-end gap-3 pt-2">
 							<button
 								type="button"
-								on:click={handleSkipDetails}
+								onclick={handleSkipDetails}
 								class="active-press text-sm font-semibold text-slate-600 underline underline-offset-4 transition-all duration-200 hover:text-slate-900 hover:scale-105"
 							>
 								Skip for now
@@ -857,13 +857,13 @@
 							<!-- Actions -->
 							<div class="animate-fade-up-stagger flex gap-2" style="animation-delay: 300ms">
 								<button
-									on:click={() => (view = 'chat')}
+									onclick={() => (view = 'chat')}
 									class="active-press flex-1 rounded-xl bg-[#1a73e8] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition-all duration-300 hover:bg-[#155ec2] hover:shadow-xl hover:scale-105"
 								>
 									Continue Chat
 								</button>
 								<button
-									on:click={handleNewConversation}
+									onclick={handleNewConversation}
 									class="active-press rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition-all duration-300 hover:bg-slate-50 hover:border-slate-300 hover:scale-105"
 								>
 									New
@@ -882,7 +882,7 @@
 									Start a conversation to see your chat history
 								</p>
 								<button
-									on:click={() => (view = 'welcome')}
+									onclick={() => (view = 'welcome')}
 									class="rounded-xl bg-[#1a73e8] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#155ec2]"
 								>
 									Start Chatting
@@ -909,7 +909,7 @@
 									>
 										<div class="flex items-start justify-between gap-3">
 											<button
-												on:click={() => handleLoadConversation(conversation.sessionId)}
+												onclick={() => handleLoadConversation(conversation.sessionId)}
 												class="flex-1 text-left transition-all duration-200 hover:scale-[1.01]"
 											>
 												<div class="mb-1 flex items-center gap-2">
@@ -933,7 +933,7 @@
 												</div>
 											</button>
 											<button
-												on:click={() => handleDeleteConversation(conversation.sessionId)}
+												onclick={() => handleDeleteConversation(conversation.sessionId)}
 												class="active-press rounded-lg p-2 text-slate-400 transition-all duration-200 hover:bg-red-50 hover:text-red-600 hover:scale-110"
 												aria-label="Delete conversation"
 											>
@@ -962,7 +962,7 @@
 									Start chatting to build your conversation history
 								</p>
 								<button
-									on:click={() => (view = 'welcome')}
+									onclick={() => (view = 'welcome')}
 									class="rounded-xl bg-[#1a73e8] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#155ec2]"
 								>
 									Start Chatting
