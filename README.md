@@ -1,12 +1,16 @@
-# IntelliChat AI
+# IntelliChat AI 💬
 
 > **A production-ready AI customer support chat widget** built for the Spur Founding Full-Stack Engineer take-home assignment.
+
+![IntelliChat AI Screenshot](public/image.png)
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg)](https://nodejs.org/)
 [![Svelte](https://img.shields.io/badge/Svelte-5-orange.svg)](https://svelte.dev/)
-[![Tests](https://img.shields.io/badge/Tests-238%20passing-success.svg)](packages/backend/tests)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/Tests-Passing-success.svg)](packages/backend/tests)
+
+**🔗 Live Demo:** [https://intellichat-ai.vercel.app](https://intellichat-ai.vercel.app)  
+**📡 Backend API:** [https://intellichat-ai-zlif.onrender.com](https://intellichat-ai-zlif.onrender.com/health)
 
 ## 📋 Table of Contents
 
@@ -32,21 +36,28 @@
 
 ## 🎯 Overview
 
-IntelliChat AI is a **mini AI support agent** for live chat widgets that demonstrates production-ready full-stack engineering. Built as a take-home assignment, it showcases:
+IntelliChat AI is a **mini AI support agent** for live chat widgets—built to demonstrate production-ready full-stack engineering for Spur's take-home assignment.
 
-- **Real LLM Integration**: Groq API (Llama 3.3 70B) for intelligent responses
-- **Clean Architecture**: 3-layer pattern (Controller → Service → Repository)
-- **Robust Error Handling**: Graceful degradation for all failure scenarios
-- **Comprehensive Testing**: 238 passing tests with 85%+ coverage
-- **Production-Ready**: Rate limiting, validation, caching, monitoring
+**Assignment Requirements Met:**
+- ✅ Real LLM integration (Groq API with Llama 3.3 70B)
+- ✅ Conversation persistence (PostgreSQL + Prisma)
+- ✅ FAQ knowledge base (shipping, returns, support hours)
+- ✅ Input validation & error handling
+- ✅ Clean TypeScript architecture
+- ✅ Comprehensive testing
+- ✅ Deployed and fully functional
 
-**Why this matters:** At Spur, you'd build similar multi-channel AI agents for WhatsApp, Instagram, Facebook, and live chat. This project demonstrates the exact skills needed.
+**Why This Architecture Matters for Spur:**  
+Built with 3-layer pattern (Controller → Service → Repository) to easily extend to WhatsApp, Instagram, Facebook, and live chat—exactly what Spur needs for multi-channel AI agents.
 
 ---
 
-## ⚡ Quick Reference
+## ⚡ Quick Start
 
-### Run with Docker (Easiest)
+### Option 1: Try the Live Demo
+Visit **[intellichat-ai.vercel.app](https://intellichat-ai.vercel.app)** to test it immediately!
+
+### Option 2: Run Locally with Docker
 ```bash
 git clone https://github.com/priyanshusaini105/intellichat-ai.git
 cd intellichat-ai
@@ -55,45 +66,46 @@ docker-compose up --build
 ```
 ✅ Access at http://localhost:5173
 
-### Run Locally
+### Option 3: Local Development
 ```bash
 git clone https://github.com/priyanshusaini105/intellichat-ai.git
 cd intellichat-ai
 pnpm install
 
-# Set up environment variables (see Quick Start section)
+# Set up environment (see .env.example files)
 cd packages/backend && pnpm prisma:generate && pnpm prisma:push
 
 # Terminal 1: Backend
 cd packages/backend && pnpm dev
 
-# Terminal 2: Frontend
+# Terminal 2: Frontend  
 cd packages/frontend && pnpm dev
 ```
 ✅ Access at http://localhost:5173
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-### Core Features
-- ✅ **Real-time chat interface** with auto-scroll and typing indicators
-- ✅ **AI-powered responses** using Groq (Llama 3.3 70B Versatile)
-- ✅ **Conversation persistence** with PostgreSQL
-- ✅ **Multi-session support** with localStorage synchronization
-- ✅ **FAQ knowledge base** for e-commerce support
-- ✅ **Error handling** for timeouts, rate limits, network failures
-- ✅ **Input validation** with length limits and sanitization
+### Assignment Requirements
+- ✅ **Real LLM API** - Groq (Llama 3.3 70B) with LangChain
+- ✅ **PostgreSQL Persistence** - Conversations & messages
+- ✅ **FAQ Knowledge Base** - Shipping, returns, support hours, payments
+- ✅ **Input Validation** - Length limits, empty message blocking
+- ✅ **Error Handling** - Timeouts, rate limits, network failures
+- ✅ **Chat UI** - Auto-scroll, typing indicator, message history
+- ✅ **Clean TypeScript** - Strict mode, no `any` types
+- ✅ **Production Ready** - Deployed and fully functional
 
 ### Bonus Features
-- 🎨 **Conversation history** with timestamps and message counts
-- 🗑️ **Delete conversations** functionality
-- ⚡ **Quick question buttons** for common FAQs
-- 📊 **Character counter** with visual feedback
-- 📱 **Responsive design** (mobile-friendly)
-- 🔄 **Redis caching** (optional, graceful fallback)
-- 🛡️ **Rate limiting** (IP + session based)
-- 🔁 **Retry logic** with exponential backoff
+- 🗂️ **Multi-session Support** - Manage multiple conversations
+- 🗑️ **Delete Conversations** - Clean up old chats
+- ⚡ **Quick Question Buttons** - One-click FAQs
+- 📊 **Character Counter** - Visual feedback on message length
+- 🔄 **Redis Caching** - Optional performance boost
+- 📱 **Responsive Design** - Works on mobile/tablet/desktop
+- 🛡️ **Rate Limiting** - IP + session-based protection
+- 🎨 **Modern UI** - Tailwind CSS, smooth animations
 
 ---
 
