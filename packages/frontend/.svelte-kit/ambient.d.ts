@@ -47,11 +47,10 @@ declare module '$env/static/private' {
 	export const npm_config_globalconfig: string;
 	export const XDG_SEAT: string;
 	export const PWD: string;
-	export const LOGNAME: string;
 	export const XDG_SESSION_DESKTOP: string;
+	export const LOGNAME: string;
 	export const QT_QPA_PLATFORMTHEME: string;
 	export const XDG_SESSION_TYPE: string;
-	export const npm_config_recursive: string;
 	export const VSCODE_GIT_ASKPASS_NODE: string;
 	export const TERMINAL: string;
 	export const MOTD_SHOWN: string;
@@ -79,8 +78,9 @@ declare module '$env/static/private' {
 	export const PYTHON_BASIC_REPL: string;
 	export const USER: string;
 	export const npm_config_frozen_lockfile: string;
-	export const CUDA_PATH: string;
+	export const GIT_PAGER: string;
 	export const VSCODE_GIT_IPC_HANDLE: string;
+	export const CUDA_PATH: string;
 	export const PAM_KWALLET5_LOGIN: string;
 	export const HYPRLAND_INSTANCE_SIGNATURE: string;
 	export const DISPLAY: string;
@@ -95,8 +95,8 @@ declare module '$env/static/private' {
 	export const npm_execpath: string;
 	export const XDG_RUNTIME_DIR: string;
 	export const NODE_PATH: string;
-	export const DEBUGINFOD_URLS: string;
 	export const NVCC_CCBIN: string;
+	export const DEBUGINFOD_URLS: string;
 	export const npm_package_json: string;
 	export const BUN_INSTALL: string;
 	export const VSCODE_GIT_ASKPASS_MAIN: string;
@@ -109,6 +109,8 @@ declare module '$env/static/private' {
 	export const MAIL: string;
 	export const npm_config_registry: string;
 	export const npm_node_execpath: string;
+	export const npm_config_engine_strict: string;
+	export const OLDPWD: string;
 	export const TERM_PROGRAM: string;
 	export const NODE_ENV: string;
 	export const PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS: string;
@@ -162,11 +164,10 @@ declare module '$env/dynamic/private' {
 		npm_config_globalconfig: string;
 		XDG_SEAT: string;
 		PWD: string;
-		LOGNAME: string;
 		XDG_SESSION_DESKTOP: string;
+		LOGNAME: string;
 		QT_QPA_PLATFORMTHEME: string;
 		XDG_SESSION_TYPE: string;
-		npm_config_recursive: string;
 		VSCODE_GIT_ASKPASS_NODE: string;
 		TERMINAL: string;
 		MOTD_SHOWN: string;
@@ -194,8 +195,9 @@ declare module '$env/dynamic/private' {
 		PYTHON_BASIC_REPL: string;
 		USER: string;
 		npm_config_frozen_lockfile: string;
-		CUDA_PATH: string;
+		GIT_PAGER: string;
 		VSCODE_GIT_IPC_HANDLE: string;
+		CUDA_PATH: string;
 		PAM_KWALLET5_LOGIN: string;
 		HYPRLAND_INSTANCE_SIGNATURE: string;
 		DISPLAY: string;
@@ -210,8 +212,8 @@ declare module '$env/dynamic/private' {
 		npm_execpath: string;
 		XDG_RUNTIME_DIR: string;
 		NODE_PATH: string;
-		DEBUGINFOD_URLS: string;
 		NVCC_CCBIN: string;
+		DEBUGINFOD_URLS: string;
 		npm_package_json: string;
 		BUN_INSTALL: string;
 		VSCODE_GIT_ASKPASS_MAIN: string;
@@ -224,6 +226,8 @@ declare module '$env/dynamic/private' {
 		MAIL: string;
 		npm_config_registry: string;
 		npm_node_execpath: string;
+		npm_config_engine_strict: string;
+		OLDPWD: string;
 		TERM_PROGRAM: string;
 		NODE_ENV: string;
 		PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS: string;

@@ -408,68 +408,68 @@
 <!-- Floating button - always visible -->
 <button
 	onclick={() => (isOpen = !isOpen)}
-	class="active-press hover-lift fixed right-6 bottom-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#1a73e8] text-white shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl"
+	class="active-press hover-lift fixed right-4 bottom-4 sm:right-6 sm:bottom-6 z-30 flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-[#1a73e8] text-white shadow-xl transition-all duration-300 hover:scale-110 hover:shadow-2xl"
 	class:animate-pulse-shadow={!isOpen}
 	aria-label={isOpen ? 'Close support widget' : 'Open support widget'}
 >
 	{#if isOpen}
-		<X class="animate-rotate-in h-6 w-6" />
+		<X class="animate-rotate-in h-5 w-5 sm:h-6 sm:w-6" />
 	{:else}
-		<MessageSquare class="h-6 w-6 transition-transform duration-300" />
+		<MessageSquare class="h-5 w-5 sm:h-6 sm:w-6 transition-transform duration-300" />
 	{/if}
 </button>
 
 <!-- Widget popup -->
 {#if isOpen}
-	<div class="animate-widget-open fixed right-6 bottom-24 z-20 w-full max-w-[430px]">
+	<div class="animate-widget-open fixed inset-x-0 bottom-0 z-20 w-full sm:inset-x-auto sm:right-6 sm:bottom-24 sm:max-w-[430px]">
 		<div
-			class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl ring-1 shadow-blue-100/40 ring-slate-100"
+			class="overflow-hidden rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 bg-white shadow-2xl ring-1 shadow-blue-100/40 ring-slate-100 max-h-[100dvh] sm:max-h-none flex flex-col"
 		>
 			<!-- Header -->
-			<div class="flex items-center justify-between bg-[#1a73e8] px-4 py-3 text-white">
-				<div class="flex items-center gap-2">
+			<div class="flex items-center justify-between bg-[#1a73e8] px-3 sm:px-4 py-2.5 sm:py-3 text-white flex-shrink-0">
+				<div class="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
 					{#if view !== 'welcome'}
 						<button
 							onclick={() =>
 								(view =
 									view === 'history' ? 'chat' : view === 'all-history' ? 'welcome' : 'welcome')}
-							class="active-press rounded-full p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
+							class="active-press rounded-full p-1.5 sm:p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110 flex-shrink-0"
 							aria-label="Go back"
 						>
-							<ArrowLeft class="h-5 w-5" />
+							<ArrowLeft class="h-4 w-4 sm:h-5 sm:w-5" />
 						</button>
 					{/if}
-					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 transition-all duration-300 hover:bg-white/30">
+					<div class="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/20 transition-all duration-300 hover:bg-white/30 flex-shrink-0">
 						{#if view === 'welcome'}
-							<Sparkles class="animate-fade-scale-in h-5 w-5" />
+							<Sparkles class="animate-fade-scale-in h-4 w-4 sm:h-5 sm:w-5" />
 						{:else if view === 'history' || view === 'all-history'}
-							<Clock class="animate-fade-scale-in h-5 w-5" />
+							<Clock class="animate-fade-scale-in h-4 w-4 sm:h-5 sm:w-5" />
 						{:else}
-							<MessageCircle class="animate-fade-scale-in h-5 w-5" />
+							<MessageCircle class="animate-fade-scale-in h-4 w-4 sm:h-5 sm:w-5" />
 						{/if}
 					</div>
-					<div>
-						<p class="text-sm leading-tight font-semibold">{headerTitle}</p>
-						<p class="text-xs text-white/80">We're online</p>
+					<div class="min-w-0 flex-1">
+						<p class="text-xs sm:text-sm leading-tight font-semibold truncate">{headerTitle}</p>
+						<p class="text-[10px] sm:text-xs text-white/80 truncate">We're online</p>
 					</div>
 				</div>
-				<div class="flex items-center gap-1">
+				<div class="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
 					{#if view === 'chat' && messages.length > 0}
 						<button
 							onclick={() => (view = 'history')}
-							class="active-press rounded-full p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
+							class="active-press rounded-full p-1.5 sm:p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
 							aria-label="View history"
 							title="View conversation info"
 						>
-							<Clock class="h-5 w-5" />
+							<Clock class="h-4 w-4 sm:h-5 sm:w-5" />
 						</button>
 						<button
 							onclick={handleNewConversation}
-							class="active-press rounded-full p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
+							class="active-press rounded-full p-1.5 sm:p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
 							aria-label="New conversation"
 							title="Start new conversation"
 						>
-							<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path
 									stroke-linecap="round"
 									stroke-linejoin="round"
@@ -481,34 +481,34 @@
 					{/if}
 					<button
 						onclick={() => (isOpen = false)}
-						class="active-press rounded-full p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
+						class="active-press rounded-full p-1.5 sm:p-2 text-white transition-all duration-200 hover:bg-white/20 hover:scale-110"
 						aria-label="Close widget"
 					>
-						<X class="h-5 w-5" />
+						<X class="h-4 w-4 sm:h-5 sm:w-5" />
 					</button>
 				</div>
 			</div>
 
 			<!-- Content -->
-			<div class="bg-slate-50/60 p-6">
+			<div class="bg-slate-50/60 p-4 sm:p-6 overflow-y-auto flex-1">
 				{#if view === 'welcome'}
 					<!-- Welcome View -->
-					<div class="animate-fade-scale-in space-y-6">
+					<div class="animate-fade-scale-in space-y-4 sm:space-y-6">
 						<div
-							class="hover-lift rounded-3xl bg-gradient-to-br from-[#1a73e8] via-[#1d82ff] to-[#0f5ad3] p-6 text-white shadow-lg transition-all duration-300"
+							class="hover-lift rounded-2xl sm:rounded-3xl bg-gradient-to-br from-[#1a73e8] via-[#1d82ff] to-[#0f5ad3] p-4 sm:p-6 text-white shadow-lg transition-all duration-300"
 						>
-							<div class="flex items-start justify-between">
-								<div class="space-y-2">
-									<p class="text-sm tracking-wide text-white/80 uppercase">Spur Support</p>
-									<h2 class="text-2xl leading-snug font-semibold">
+							<div class="flex items-start justify-between gap-3">
+								<div class="space-y-1.5 sm:space-y-2 min-w-0 flex-1">
+									<p class="text-xs sm:text-sm tracking-wide text-white/80 uppercase">Spur Support</p>
+									<h2 class="text-lg sm:text-2xl leading-snug font-semibold">
 										Hey 👋, how can we help you today?
 									</h2>
-									<p class="text-sm text-white/80">We usually respond within 10 minutes</p>
+									<p class="text-xs sm:text-sm text-white/80">We usually respond within 10 minutes</p>
 								</div>
 								<div
-									class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur"
+									class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl sm:rounded-2xl bg-white/15 backdrop-blur flex-shrink-0"
 								>
-									<Sparkles class="h-6 w-6" />
+									<Sparkles class="h-5 w-5 sm:h-6 sm:w-6" />
 								</div>
 							</div>
 						</div>
@@ -572,7 +572,7 @@
 					</div>
 				{:else if view === 'chat'}
 					<!-- Chat View -->
-					<div class="animate-fade-scale-in flex h-[420px] flex-col">
+					<div class="animate-fade-scale-in flex flex-col h-full max-h-[calc(100dvh-180px)] sm:h-[420px]">
 						<div
 							class="thin-scrollbar flex-1 space-y-4 overflow-y-auto pr-1"
 							bind:this={messageListRef}
@@ -652,7 +652,7 @@
 							{/if}
 						</div>
 
-						<div class="mt-4 rounded-2xl border border-slate-200 bg-white p-3 shadow-inner transition-all duration-300 focus-within:border-blue-300 focus-within:shadow-md">
+						<div class="mt-4 rounded-2xl border border-slate-200 bg-white p-2 sm:p-3 shadow-inner transition-all duration-300 focus-within:border-blue-300 focus-within:shadow-md flex-shrink-0">
 							<div class="flex items-center gap-2">
 								<textarea
 									bind:value={input}
@@ -660,11 +660,11 @@
 									onfocus={(e) => e.currentTarget.parentElement?.parentElement?.classList.add('animate-input-focus')}
 									placeholder="Type your message..."
 									rows="1"
-									class="min-h-[44px] flex-1 resize-none bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 transition-all duration-200"
+									class="min-h-[40px] sm:min-h-[44px] flex-1 resize-none bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 transition-all duration-200"
 								></textarea>
 								<button
 									onclick={handleSend}
-									class="active-press inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[#1a73e8] text-white shadow-md transition-all duration-300 hover:bg-[#155ec2] hover:shadow-lg hover:scale-110 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:opacity-50 disabled:hover:scale-100"
+									class="active-press inline-flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl bg-[#1a73e8] text-white shadow-md transition-all duration-300 hover:bg-[#155ec2] hover:shadow-lg hover:scale-110 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:opacity-50 disabled:hover:scale-100 flex-shrink-0"
 									disabled={!input.trim() || isLoading}
 									aria-label="Send message"
 								>
@@ -892,16 +892,16 @@
 					</div>
 				{:else if view === 'all-history'}
 					<!-- All Conversations History View -->
-					<div class="animate-fade-scale-in space-y-4">
-						<div class="flex items-center justify-between">
+					<div class="animate-fade-scale-in space-y-4 h-full max-h-[calc(100dvh-180px)] sm:max-h-none flex flex-col">
+						<div class="flex items-center justify-between flex-shrink-0">
 							<div>
-								<h3 class="text-lg font-semibold text-slate-900">All Conversations</h3>
+								<h3 class="text-base sm:text-lg font-semibold text-slate-900">All Conversations</h3>
 								<p class="text-xs text-slate-500">{allConversations.length} total chats</p>
 							</div>
 						</div>
 
 						{#if allConversations.length > 0}
-							<div class="thin-scrollbar max-h-[420px] space-y-2 overflow-y-auto">
+							<div class="thin-scrollbar space-y-2 overflow-y-auto flex-1">
 								{#each allConversations as conversation, i (conversation.sessionId)}
 									<div
 										class="hover-lift animate-fade-up-stagger rounded-xl border border-slate-200 bg-white p-4 transition-all duration-300 hover:border-blue-200 hover:shadow-md"
@@ -975,20 +975,20 @@
 
 			<!-- Footer -->
 			<div
-				class="flex items-center justify-between border-t border-slate-100 px-5 py-3 text-xs text-slate-500"
+				class="flex flex-col sm:flex-row items-center justify-between border-t border-slate-100 px-3 sm:px-5 py-2 sm:py-3 text-xs text-slate-500 gap-2 sm:gap-0 flex-shrink-0"
 			>
 				<div class="flex items-center gap-2 text-slate-600">
 					<div
-						class="flex h-7 w-7 items-center justify-center rounded-full bg-blue-50 text-[#1a73e8]"
+						class="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-full bg-blue-50 text-[#1a73e8]"
 					>
-						<Wand2 class="h-4 w-4" />
+						<Wand2 class="h-3 w-3 sm:h-4 sm:w-4" />
 					</div>
-					<span>Powered by spurnow.com</span>
+					<span class="text-[10px] sm:text-xs">Powered by spurnow.com</span>
 				</div>
 				<div class="flex items-center gap-3 text-slate-400">
 					<div class="flex items-center gap-1">
-						<Clock class="h-4 w-4" />
-						<span>10 min avg. reply</span>
+						<Clock class="h-3 w-3 sm:h-4 sm:w-4" />
+						<span class="text-[10px] sm:text-xs">10 min avg. reply</span>
 					</div>
 				</div>
 			</div>
