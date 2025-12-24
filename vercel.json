@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "cd packages/frontend && pnpm run build",
+  "buildCommand": "pnpm --filter frontend build",
   "outputDirectory": "packages/frontend/.vercel/output",
   "installCommand": "pnpm install --frozen-lockfile",
   "framework": null
